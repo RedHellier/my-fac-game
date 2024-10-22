@@ -14,18 +14,12 @@ body {
     margin: 0;
 }
 
-#game-border {
+#game-space {
     background-color: black;
-    border: solid black 10px;
+    border: solid black 1px;
     border-radius: 20px;
     width: 566px;
     height: 626px;
-}
-
-#game-space {
-    background-color: black;
-    border: solid #3E5BF5 3px;
-    border-radius: 21.5px;
 }
 
 #game-keys {
