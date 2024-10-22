@@ -1,7 +1,9 @@
 const canvas = document.getElementById("game-space");
 const ctx = canvas.getContext("2d");
 
-grid = [
+let dx, dy, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
+
+/*grid = [
     // Row 0
     [
         {contains:"wall",drawType:"bottomToRight"},
@@ -575,7 +577,15 @@ grid = [
     {x:25,y:30,drawType:"horz"},
     {x:26,y:30,drawType:"horz"},
     {x:27,y:30,drawType:"topToLeft"},
-]
+]*/
+
+/**
+ * @typedef Drawable
+ * @type {object}
+ * @property {number} x - an ID.
+ * @property {number} y - your name.
+ * @property {"horz"|"vert"|"bottomToLeft"|"bottomToRight"|"topToLeft"|"topToRight"|"headN"|"headE"|"headS"|"headW"} drawType
+ */
 
 const walls = [
     //Row 0
@@ -1091,38 +1101,48 @@ const walls = [
     {x:27,y:30,drawType:"topToLeft"},
 ]
 
-const wallTypes = {
+const curveDirections = {
     vert:{startX:0,startY:-10,endX:0,endY:10},
     horz:{startX:-10,startY:0,endX:10,endY:0},
     topToLeft:{startX:0,startY:-10,endX:-10,endY:0},
     topToRight:{startX:0,startY:-10,endX:10,endY:0},
     bottomToLeft:{startX:0,startY:10,endX:-10,endY:0},
-    bottomToRight:{startX:0,startY:10,endX:10,endY:0}
+    bottomToRight:{startX:0,startY:10,endX:10,endY:0},
+    head:{size:15},
+    body:{size:13},
+    tail:{size:11}
 }
 
-var toGrid = coord => coord*20+10;
 
-/**
- * A function that draws what is in a square onto the game grid
- * @param {number} x coordinate
- * @param {number} y coordinate
- */
+let toGrid = coord => coord*20+10;
+//let isCentred = (x,y) => (x-10)%20===0&&(y-10)%20===0;
+
+function initialiseGame() {
+    snake = [
+        {x:13,y:23,drawType:"head"},
+        {x:12,y:23,drawType:"body"},
+        {x:11,y:23,drawType:"body"},
+        {x:10,y:23,drawType:"tail"},
+    ]
+}
+
+function moveSnake() {
+    
+}
+
+/*
 function drawGridSquare(x,y) {
     let gridX = toGrid(x);
     let gridY = toGrid(y);
     let square = grid[y][x];
     if (square.contains === "wall") {
-        let adjustment = wallTypes[square.drawType];
+        let adjustment = curveDirections[square.drawType];
         ctx.moveTo(gridX+adjustment.startX, gridY+adjustment.startY);
         ctx.quadraticCurveTo(gridX, gridY, gridX+adjustment.endX, gridY+adjustment.endY);
         ctx.stroke();
     }
 }
 
-/**
- * A function that draws all the squares of the game grid
- * @param {Array} level An array of what is in the grid
- */
 function drawGrid(level) {
     for (let y = 0; y < level.length; y++) {
         console.log(level[y].length)
@@ -1132,17 +1152,47 @@ function drawGrid(level) {
         }
     }
 }
+*/
 
-/*
+/**
+ * 
+ * @param {Drawable} body 
+ */
+function drawSnakeBody(body) {
+    let gridX = toGrid(body.x);
+    let gridY = toGrid(body.y);
+    let adjustment = curveDirections[body.drawType];
+    ctx.arc(gridX, gridY, adjustment.size, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+/**
+ * Take a wall object and draw it as a curve
+ * @param {Drawable} wall 
+ */
 function drawWall(wall) {
     let gridX = toGrid(wall.x);
     let gridY = toGrid(wall.y);
-    let adjustment = wallTypes[wall.drawType];
+    let adjustment = curveDirections[wall.drawType];
     ctx.moveTo(gridX+adjustment.startX, gridY+adjustment.startY);
     ctx.quadraticCurveTo(gridX, gridY, gridX+adjustment.endX, gridY+adjustment.endY);
     ctx.stroke();
 }
 
+
+function drawSnake() {
+    ctx.beginPath();
+    ctx.fillStyle = "green";
+    ctx.lineWidth = 10;
+    for (let body of snake) {
+        drawSnakeBody(body);
+    }
+}
+
+/**
+ * Loops through an array of walls and draws them
+ * @param {Array} level 
+ */
 function drawWalls(level) {
     ctx.beginPath();
     ctx.strokeStyle = "#3E5BF5";
@@ -1152,17 +1202,7 @@ function drawWalls(level) {
     }
 }
 
-
+initialiseGame();
 drawWalls(walls);
-ctx.beginPath();
-ctx.arc(280, 470, 15, 0, 2 * Math.PI);
-ctx.fillStyle = "green";
-ctx.fill();
-
-*/
-
-ctx.beginPath();
-ctx.strokeStyle = "#3E5BF5";
-ctx.lineWidth = 2.5;
-drawGrid(grid);
+drawSnake(snake);
 
