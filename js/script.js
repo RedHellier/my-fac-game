@@ -1,7 +1,7 @@
 const canvas = document.getElementById("game-space");
 const ctx = canvas.getContext("2d");
 
-let dx, dy, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
+let walls, dx, dy, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
 
 /*grid = [
     // Row 0
@@ -582,12 +582,12 @@ let dx, dy, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
 /**
  * @typedef Drawable
  * @type {object}
- * @property {number} x - an ID.
- * @property {number} y - your name.
+ * @property {number} x
+ * @property {number} y
  * @property {"horz"|"vert"|"bottomToLeft"|"bottomToRight"|"topToLeft"|"topToRight"|"headN"|"headE"|"headS"|"headW"} drawType
  */
 
-const walls = [
+const levelOne = [
     //Row 0
     {x:0,y:0,drawType:"bottomToRight"},
     {x:1,y:0,drawType:"horz"},
@@ -1113,22 +1113,54 @@ const curveDirections = {
     tail:{size:11}
 }
 
+walls = levelOne;
 
+/**
+ * Converts Grid Unit to Canvas Unit
+ * @param {number} coord 
+ * @returns {number} Value of coord in canvas units
+ */
 let toGrid = coord => coord*20+10;
+
+/**
+ * Checks for collision between two Drawables on Grid
+ * @param {Drawable} a 
+ * @param {Drawable} b 
+ * @returns {boolean} true if they have the same coordinates
+ */
+let collides = (a,b) => a.x===b.x&&a.y===b.y;
+
+let collidesWithWall = function(head) {
+    for (let wall of walls) {
+        if (collides(head,wall)) { return true }
+    }
+    return false;
+}
+
 //let isCentred = (x,y) => (x-10)%20===0&&(y-10)%20===0;
 
 function initialiseGame() {
+    dx = 1;
+    dy = 0;
     snake = [
         {x:13,y:23,drawType:"head"},
-        {x:12,y:23,drawType:"body"},
-        {x:11,y:23,drawType:"body"},
         {x:10,y:23,drawType:"tail"},
-    ]
+    ];
+    drawGame(walls);
 }
 
 function moveSnake() {
-    
+    let newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
+    if (!collidesWithWall(newHead)) {
+        snake[0].drawType = "body";
+        snake.unshift(newHead);
+        snake.pop();
+        snake[snake.length-1].drawType = "tail";
+    } else {
+        console.log("crash");
+    }
 }
+
 
 /*
 function drawGridSquare(x,y) {
@@ -1189,11 +1221,7 @@ function drawSnake() {
     }
 }
 
-/**
- * Loops through an array of walls and draws them
- * @param {Array} level 
- */
-function drawWalls(level) {
+function drawWalls() {
     ctx.beginPath();
     ctx.strokeStyle = "#3E5BF5";
     ctx.lineWidth = 2.5;
@@ -1202,7 +1230,20 @@ function drawWalls(level) {
     }
 }
 
+function drawGame() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    drawWalls();
+    drawSnake();
+}
+
+function updateGame() {
+    moveSnake();
+    drawGame();
+    setTimeout(updateGame,350); 
+}
+
 initialiseGame();
-drawWalls(walls);
-drawSnake(snake);
+updateGame()
+
 
