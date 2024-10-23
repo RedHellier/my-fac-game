@@ -966,19 +966,7 @@ function initialiseGame() {
 
     snake = [
         {x:13,y:23,drawType:"head"},
-        {x:12,y:23,drawType:"body"},
-        {x:11,y:23,drawType:"body"},
-        {x:10,y:23,drawType:"body"},
-        {x:9,y:23,drawType:"body"},
-        {x:8,y:23,drawType:"body"},
-        {x:7,y:23,drawType:"body"},
-        {x:6,y:23,drawType:"body"},
-        {x:5,y:23,drawType:"body"},
-        {x:4,y:23,drawType:"body"},
-        {x:3,y:23,drawType:"body"},
-        {x:2,y:23,drawType:"body"},
-        {x:1,y:23,drawType:"body"},
-        {x:0,y:23,drawType:"tail"},
+        {x:12,y:23,drawType:"tail"},
     ];
 
     food = addFood();
