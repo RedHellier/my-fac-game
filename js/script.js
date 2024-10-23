@@ -524,7 +524,7 @@ const levelOneWalls = [
     {x:25,y:30,drawType:"horz"},
     {x:26,y:30,drawType:"horz"},
     {x:27,y:30,drawType:"topToLeft"},
-]
+];
 
 const levelOneSpace = [
     //Row 1
@@ -850,7 +850,7 @@ const levelOneSpace = [
     {x:24,y:29},
     {x:25,y:29},
     {x:26,y:29}
-]
+];
 
 const curveDirections = {
     vert:{startX:0,startY:-10,endX:0,endY:10},
@@ -862,13 +862,13 @@ const curveDirections = {
     head:{size:15},
     body:{size:13},
     tail:{size:11}
-}
+};
 
 const foodTypes = {
     cherry:"red",
     grapes:"purple",
     peach:"pink"
-}
+};
 
 walls = levelOneWalls;
 space = levelOneSpace;
@@ -961,12 +961,12 @@ let collidesWithArray = function(head,array) {
 function initialiseGame() {
     gameSpeed = 150;
 
-    dxStored = 1;
+    dxStored = 0;
     dyStored = 0;
 
     snake = [
         {x:13,y:23,drawType:"head"},
-        {x:12,y:23,drawType:"tail"},
+        {x:13-dxStored,y:23,drawType:"tail"},
     ];
 
     food = addFood();
@@ -985,7 +985,11 @@ function initialiseGame() {
 
 function moveSnake() {
     let newHead;
+    let collidesWithWall;
+    let collidesWithSelf;
+    let collidesWithFood;
     let collidesWithPower;
+    let loops;
     
     powered ? powered -= 5 : powered = 0;
 
@@ -996,31 +1000,37 @@ function moveSnake() {
     }
 
     newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
+
+    collidesWithWall = collidesWithArray(newHead,walls);
+    collidesWithSelf = collidesWithArray(newHead,snake.slice(1)) && !powered;
+    collidesWithFood = collides(newHead,food);
     collidesWithPower = collidesWithArray(newHead,powers);
-    if (collidesWithArray(newHead,walls)) {
+    loops = newHead.x < 0 || newHead.x > 27;
+
+    if (collidesWithWall) {
         console.log("crash");
-    } else if (collidesWithArray(newHead,snake.slice(1)) && !powered) {
+        return;
+    } else if (collidesWithSelf) {
         dx = 0;
         dy = 0;
         dxStored = 0;
         dyStored = 0;
         console.log("dead");
+        return;
     } else if (collidesWithPower) {
         powered = 200;
         powers = powers.filter((el) => el!==collidesWithPower);
-        snake[0].drawType = "body";
-        snake.unshift(newHead);
+    } else if (loops) {
+        newHead.x -= 28*Math.sign(newHead.x)
+    }
+
+    snake[0].drawType = "body";
+    snake.unshift(newHead);
+    if (collidesWithFood) {
+        food = addFood();
+    } else {
         snake.pop();
         snake[snake.length-1].drawType = "tail";
-    } else {
-        snake[0].drawType = "body";
-        snake.unshift(newHead);
-        if (collides(newHead,food)) {
-            food = addFood();
-        } else {
-            snake.pop();
-            snake[snake.length-1].drawType = "tail";
-        }
     }
 }
 
@@ -1084,7 +1094,7 @@ function drawPower(power) {
 }
 
 function drawSnake() {
-    ctx.fillStyle = powered ? "rgb(0 255 0 / 50%)" : "rgb(0 255 0 / 100%)"
+    ctx.fillStyle = powered ? "rgb(252 234 63 / 70%)" : "rgb(252 234 63 / 100%)"
     for (let body of snake) {
         drawSnakeBody(body);
     }

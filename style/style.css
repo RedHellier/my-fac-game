@@ -1,10 +1,11 @@
 body {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     background-color: aliceblue;
     align-items: center;
-    height: 100vh;
+    height: 98vh;
+    margin: 0;
 }
 
 #game-title {
@@ -18,8 +19,11 @@ body {
     background-color: black;
     border: solid black 1px;
     border-radius: 20px;
-    width: 566px;
-    height: 626px;
+    width: 98vw;
+    max-width: 566px;
+    height: min-content;
+    max-height:  626px;
+    margin: 20px 0;
 }
 
 #game-keys {
