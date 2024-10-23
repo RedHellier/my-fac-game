@@ -1,7 +1,7 @@
 const canvas = document.getElementById("game-space");
 const ctx = canvas.getContext("2d");
 
-let walls, space, dx, dy, gridX, gridY, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
+let walls, space, dx, dy, dxStored, dyStored, gridX, gridY, adjustment, gameRunning, gameSpeed, snake, blinky, pinky, inky, clyde, food, power;
 
 /*grid = [
     // Row 0
@@ -1448,6 +1448,40 @@ const foodTypes = {
 walls = levelOneWalls;
 space = levelOneSpace;
 
+document.addEventListener('keydown', handleKeyPress);
+
+function handleKeyPress(event) {
+    const LEFT_KEY = 37;
+    const RIGHT_KEY = 39;
+    const UP_KEY = 38;
+    const DOWN_KEY = 40;
+    const SPACE_KEY = 32;
+
+    const keyPressed = event.keyCode;
+
+    const goingUp = dy === -1;
+    const goingDown = dy === 1;
+    const goingRight = dx === 1;
+    const goingLeft = dx === -1;
+
+    if (keyPressed === LEFT_KEY && !goingRight) {
+        dxStored = -1;
+        dyStored = 0;
+    }
+    if (keyPressed === UP_KEY && !goingDown) {
+        dxStored = 0;
+        dyStored = -1;
+    }
+    if (keyPressed === RIGHT_KEY && !goingLeft) {
+        dxStored = 1;
+        dyStored = 0;
+    }
+    if (keyPressed === DOWN_KEY && !goingUp) {
+        dxStored = 0;
+        dyStored = 1;
+    }
+}
+
 /**
  * Select random variable in array using random number from 0 to array length
  * @param {Array} array 
@@ -1470,9 +1504,9 @@ let toGrid = coord => coord*20+10;
  */
 let collides = (a,b) => a.x===b.x&&a.y===b.y;
 
-let collidesWithWall = function(head) {
-    for (let wall of walls) {
-        if (collides(head,wall)) { return true }
+let collidesWithArray = function(head,array) {
+    for (let el of array) {
+        if (collides(head,el)) { return true }
     }
     return false;
 }
@@ -1481,11 +1515,28 @@ let collidesWithWall = function(head) {
 
 function initialiseGame() {
 
-    dx = 1;
-    dy = 0;
+    gameSpeed = 150;
+
+    dxStored = 1;
+    dyStored = 0;
     snake = [
         {x:13,y:23,drawType:"head"},
-        {x:12,y:23,drawType:"tail"},
+        {x:12,y:23,drawType:"body"},
+        {x:11,y:23,drawType:"body"},
+        {x:10,y:23,drawType:"body"},
+        {x:9,y:23,drawType:"body"},
+        {x:8,y:23,drawType:"body"},
+        {x:7,y:23,drawType:"body"},
+        {x:6,y:23,drawType:"body"},
+        {x:6,y:22,drawType:"body"},
+        {x:6,y:21,drawType:"body"},
+        {x:6,y:20,drawType:"body"},
+        {x:6,y:19,drawType:"body"},
+        {x:6,y:18,drawType:"body"},
+        {x:6,y:17,drawType:"body"},
+        {x:6,y:16,drawType:"body"},
+        {x:6,y:15,drawType:"body"},
+        {x:6,y:14,drawType:"tail"},
     ];
 
     food = {x:20,y:23,drawType:"peach"};
@@ -1494,9 +1545,23 @@ function initialiseGame() {
 }
 
 function moveSnake() {
-    let newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
-    if (collidesWithWall(newHead)) {
+    let newHead;
+
+    newHead = {x:snake[0].x+dxStored,y:snake[0].y+dyStored,drawType:"head"}
+    if (!collidesWithArray(newHead,walls)) {
+        dx = dxStored;
+        dy = dyStored;
+    }
+
+    newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
+    if (collidesWithArray(newHead,walls)) {
         console.log("crash");
+    } else if (collidesWithArray(newHead,snake.slice(1))) {
+        dx = 0;
+        dy = 0;
+        dxStored = 0;
+        dyStored = 0;
+        console.log("dead");
     } else {
         snake[0].drawType = "body";
         snake.unshift(newHead);
@@ -1552,9 +1617,10 @@ function drawGrid(level) {
  * @param {Sprite} body 
  */
 function drawSnakeBody(body) {
+    ctx.beginPath();
     gridX = toGrid(body.x);
     gridY = toGrid(body.y);
-    let adjustment = curveDirections[body.drawType];
+    adjustment = curveDirections[body.drawType];
     ctx.arc(gridX, gridY, adjustment.size, 0, 2 * Math.PI);
     ctx.fill();
 }
@@ -1564,20 +1630,13 @@ function drawSnakeBody(body) {
  * @param {Sprite} wall 
  */
 function drawWall(wall) {
+    ctx.beginPath();
     gridX = toGrid(wall.x);
     gridY = toGrid(wall.y);
-    let adjustment = curveDirections[wall.drawType];
+    adjustment = curveDirections[wall.drawType];
     ctx.moveTo(gridX+adjustment.startX, gridY+adjustment.startY);
     ctx.quadraticCurveTo(gridX, gridY, gridX+adjustment.endX, gridY+adjustment.endY);
     ctx.stroke();
-}
-
-function drawSnake() {
-    ctx.beginPath();
-    ctx.fillStyle = "green";
-    for (let body of snake) {
-        drawSnakeBody(body);
-    }
 }
 
 function drawFood() {
@@ -1589,8 +1648,14 @@ function drawFood() {
     ctx.fill();
 }
 
+function drawSnake() {
+    ctx.fillStyle = "green";
+    for (let body of snake) {
+        drawSnakeBody(body);
+    }
+}
+
 function drawWalls() {
-    ctx.beginPath();
     ctx.strokeStyle = "#3E5BF5";
     ctx.lineWidth = 2.5;
     for (let wall of walls) {
@@ -1609,7 +1674,7 @@ function drawGame() {
 function updateGame() {
     moveSnake();
     drawGame();
-    setTimeout(updateGame,350); 
+    setTimeout(updateGame,150); 
 }
 
 initialiseGame();
