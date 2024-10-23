@@ -1,7 +1,7 @@
 const canvas = document.getElementById("game-space");
 const ctx = canvas.getContext("2d");
 
-let walls, dx, dy, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
+let walls, space, dx, dy, gridX, gridY, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
 
 /*grid = [
     // Row 0
@@ -580,14 +580,14 @@ let walls, dx, dy, gameRunning, snake, blinky, pinky, inky, clyde, food, power;
 ]*/
 
 /**
- * @typedef Drawable
+ * @typedef Sprite
  * @type {object}
  * @property {number} x
  * @property {number} y
  * @property {"horz"|"vert"|"bottomToLeft"|"bottomToRight"|"topToLeft"|"topToRight"|"headN"|"headE"|"headS"|"headW"} drawType
  */
 
-const levelOne = [
+const levelOneWalls = [
     //Row 0
     {x:0,y:0,drawType:"bottomToRight"},
     {x:1,y:0,drawType:"horz"},
@@ -1101,6 +1101,332 @@ const levelOne = [
     {x:27,y:30,drawType:"topToLeft"},
 ]
 
+const levelOneSpace = [
+    //Row 1
+    {x:1,y:1},
+    {x:2,y:1},
+    {x:3,y:1},
+    {x:4,y:1},
+    {x:5,y:1},
+    {x:6,y:1},
+    {x:7,y:1},
+    {x:8,y:1},
+    {x:9,y:1},
+    {x:10,y:1},
+    {x:11,y:1},
+    {x:12,y:1},
+    {x:15,y:1},
+    {x:16,y:1},
+    {x:17,y:1},
+    {x:18,y:1},
+    {x:19,y:1},
+    {x:20,y:1},
+    {x:21,y:1},
+    {x:22,y:1},
+    {x:23,y:1},
+    {x:24,y:1},
+    {x:25,y:1},
+    {x:26,y:1},
+    //Row 2
+    {x:1,y:2},
+    {x:6,y:2},
+    {x:12,y:2},
+    {x:15,y:2},
+    {x:21,y:2},
+    {x:26,y:2},
+    //Row 3
+    {x:6,y:3},
+    {x:12,y:3},
+    {x:15,y:3},
+    {x:21,y:3},
+    //Row 4
+    {x:1,y:4},
+    {x:6,y:4},
+    {x:12,y:4},
+    {x:15,y:4},
+    {x:21,y:4},
+    {x:26,y:4},
+    //Row 5
+    {x:1,y:5},
+    {x:2,y:5},
+    {x:3,y:5},
+    {x:4,y:5},
+    {x:5,y:5},
+    {x:6,y:5},
+    {x:7,y:5},
+    {x:8,y:5},
+    {x:9,y:5},
+    {x:10,y:5},
+    {x:11,y:5},
+    {x:12,y:5},
+    {x:13,y:5},
+    {x:14,y:5},
+    {x:15,y:5},
+    {x:16,y:5},
+    {x:17,y:5},
+    {x:18,y:5},
+    {x:19,y:5},
+    {x:20,y:5},
+    {x:21,y:5},
+    {x:22,y:5},
+    {x:23,y:5},
+    {x:24,y:5},
+    {x:25,y:5},
+    {x:26,y:5},
+    //Row 6
+    {x:1,y:6},
+    {x:6,y:6},
+    {x:9,y:6},
+    {x:18,y:6},
+    {x:21,y:6},
+    {x:26,y:6},
+    //Row 7
+    {x:1,y:7},
+    {x:6,y:7},
+    {x:9,y:7},
+    {x:18,y:7},
+    {x:21,y:7},
+    {x:26,y:7},
+    //Row 8
+    {x:1,y:8},
+    {x:2,y:8},
+    {x:3,y:8},
+    {x:4,y:8},
+    {x:5,y:8},
+    {x:6,y:8},
+    {x:9,y:8},
+    {x:10,y:8},
+    {x:11,y:8},
+    {x:12,y:8},
+    {x:15,y:8},
+    {x:16,y:8},
+    {x:17,y:8},
+    {x:18,y:8},
+    {x:21,y:8},
+    {x:22,y:8},
+    {x:23,y:8},
+    {x:24,y:8},
+    {x:25,y:8},
+    {x:26,y:8},
+    //Row 9
+    {x:6,y:9},
+    {x:12,y:9},
+    {x:15,y:9},
+    {x:21,y:9},
+    //Row 10
+    {x:6,y:10},
+    {x:12,y:10},
+    {x:15,y:10},
+    {x:21,y:10},
+    //Row 11
+    {x:6,y:11},
+    {x:9,y:11},
+    {x:10,y:11},
+    {x:11,y:11},
+    {x:12,y:11},
+    {x:13,y:11},
+    {x:14,y:11},
+    {x:15,y:11},
+    {x:16,y:11},
+    {x:17,y:11},
+    {x:18,y:11},
+    {x:21,y:11},
+    //Row 12
+    {x:6,y:12},
+    {x:9,y:12},
+    {x:18,y:12},
+    {x:21,y:12},
+    //Row 13
+    {x:6,y:13},
+    {x:9,y:13},
+    {x:18,y:13},
+    {x:21,y:13},
+    //Row 14
+    {x:1,y:14},
+    {x:2,y:14},
+    {x:3,y:14},
+    {x:4,y:14},
+    {x:5,y:14},
+    {x:6,y:14},
+    {x:7,y:14},
+    {x:8,y:14},
+    {x:9,y:14},
+    {x:18,y:14},
+    {x:19,y:14},
+    {x:20,y:14},
+    {x:21,y:14},
+    {x:22,y:14},
+    {x:23,y:14},
+    {x:24,y:14},
+    {x:25,y:14},
+    {x:26,y:14},
+    //Row 15
+    {x:6,y:15},
+    {x:9,y:15},
+    {x:18,y:15},
+    {x:21,y:15},
+    //Row 16
+    {x:6,y:16},
+    {x:9,y:16},
+    {x:18,y:16},
+    {x:21,y:16},
+    //Row 17
+    {x:6,y:17},
+    {x:9,y:17},
+    {x:10,y:17},
+    {x:11,y:17},
+    {x:12,y:17},
+    {x:13,y:17},
+    {x:14,y:17},
+    {x:15,y:17},
+    {x:16,y:17},
+    {x:17,y:17},
+    {x:18,y:17},
+    {x:21,y:17},
+    //Row 18
+    {x:6,y:18},
+    {x:9,y:18},
+    {x:18,y:18},
+    {x:21,y:18},
+    //Row 19
+    {x:6,y:19},
+    {x:9,y:19},
+    {x:18,y:19},
+    {x:21,y:19},
+    //Row 20
+    {x:1,y:20},
+    {x:2,y:20},
+    {x:3,y:20},
+    {x:4,y:20},
+    {x:5,y:20},
+    {x:6,y:20},
+    {x:7,y:20},
+    {x:8,y:20},
+    {x:9,y:20},
+    {x:10,y:20},
+    {x:11,y:20},
+    {x:12,y:20},
+    {x:15,y:20},
+    {x:16,y:20},
+    {x:17,y:20},
+    {x:18,y:20},
+    {x:19,y:20},
+    {x:20,y:20},
+    {x:21,y:20},
+    {x:22,y:20},
+    {x:23,y:20},
+    {x:24,y:20},
+    {x:25,y:20},
+    {x:26,y:20},
+    //Row 21
+    {x:1,y:21},
+    {x:6,y:21},
+    {x:12,y:21},
+    {x:15,y:21},
+    {x:21,y:21},
+    {x:26,y:21},
+    //Row 22
+    {x:1,y:22},
+    {x:6,y:22},
+    {x:12,y:22},
+    {x:15,y:22},
+    {x:21,y:22},
+    {x:26,y:22},
+    //Row 23
+    {x:2,y:23},
+    {x:3,y:23},
+    {x:6,y:23},
+    {x:7,y:23},
+    {x:8,y:23},
+    {x:9,y:23},
+    {x:10,y:23},
+    {x:11,y:23},
+    {x:12,y:23},
+    {x:13,y:23},
+    {x:14,y:23},
+    {x:15,y:23},
+    {x:16,y:23},
+    {x:17,y:23},
+    {x:18,y:23},
+    {x:19,y:23},
+    {x:20,y:23},
+    {x:21,y:23},
+    {x:24,y:23},
+    {x:25,y:23},
+    //Row 24
+    {x:3,y:24},
+    {x:6,y:24},
+    {x:9,y:24},
+    {x:18,y:24},
+    {x:21,y:24},
+    {x:24,y:24},
+    //Row 25
+    {x:3,y:25},
+    {x:6,y:25},
+    {x:9,y:25},
+    {x:18,y:25},
+    {x:21,y:25},
+    {x:24,y:25},
+    //Row 26
+    {x:1,y:26},
+    {x:2,y:26},
+    {x:3,y:26},
+    {x:4,y:26},
+    {x:5,y:26},
+    {x:6,y:26},
+    {x:9,y:26},
+    {x:10,y:26},
+    {x:11,y:26},
+    {x:12,y:26},
+    {x:15,y:26},
+    {x:16,y:26},
+    {x:17,y:26},
+    {x:18,y:26},
+    {x:21,y:26},
+    {x:22,y:26},
+    {x:23,y:26},
+    {x:24,y:26},
+    {x:25,y:26},
+    {x:26,y:26},
+    //Row 27
+    {x:1,y:27},
+    {x:12,y:27},
+    {x:15,y:27},
+    {x:26,y:27},
+    //Row 28
+    {x:1,y:28},
+    {x:12,y:28},
+    {x:15,y:28},
+    {x:26,y:28},
+    //Row 29
+    {x:1,y:29},
+    {x:2,y:29},
+    {x:3,y:29},
+    {x:4,y:29},
+    {x:5,y:29},
+    {x:6,y:29},
+    {x:7,y:29},
+    {x:8,y:29},
+    {x:9,y:29},
+    {x:10,y:29},
+    {x:11,y:29},
+    {x:12,y:29},
+    {x:13,y:29},
+    {x:14,y:29},
+    {x:15,y:29},
+    {x:16,y:29},
+    {x:17,y:29},
+    {x:18,y:29},
+    {x:19,y:29},
+    {x:20,y:29},
+    {x:21,y:29},
+    {x:22,y:29},
+    {x:23,y:29},
+    {x:24,y:29},
+    {x:25,y:29},
+    {x:26,y:29}
+]
+
 const curveDirections = {
     vert:{startX:0,startY:-10,endX:0,endY:10},
     horz:{startX:-10,startY:0,endX:10,endY:0},
@@ -1113,7 +1439,21 @@ const curveDirections = {
     tail:{size:11}
 }
 
-walls = levelOne;
+const foodTypes = {
+    cherry:"red",
+    grapes:"purple",
+    peach:"pink"
+}
+
+walls = levelOneWalls;
+space = levelOneSpace;
+
+/**
+ * Select random variable in array using random number from 0 to array length
+ * @param {Array} array 
+ * @returns Random item from array
+ */
+let randomFrom = array => array[Math.floor(Math.random()*array.length)];
 
 /**
  * Converts Grid Unit to Canvas Unit
@@ -1123,9 +1463,9 @@ walls = levelOne;
 let toGrid = coord => coord*20+10;
 
 /**
- * Checks for collision between two Drawables on Grid
- * @param {Drawable} a 
- * @param {Drawable} b 
+ * Checks for collision between two Sprites on Grid
+ * @param {Sprite} a 
+ * @param {Sprite} b 
  * @returns {boolean} true if they have the same coordinates
  */
 let collides = (a,b) => a.x===b.x&&a.y===b.y;
@@ -1140,26 +1480,47 @@ let collidesWithWall = function(head) {
 //let isCentred = (x,y) => (x-10)%20===0&&(y-10)%20===0;
 
 function initialiseGame() {
+
     dx = 1;
     dy = 0;
     snake = [
         {x:13,y:23,drawType:"head"},
-        {x:10,y:23,drawType:"tail"},
+        {x:12,y:23,drawType:"tail"},
     ];
+
+    food = {x:20,y:23,drawType:"peach"};
+
     drawGame(walls);
 }
 
 function moveSnake() {
     let newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
-    if (!collidesWithWall(newHead)) {
+    if (collidesWithWall(newHead)) {
+        console.log("crash");
+    } else {
         snake[0].drawType = "body";
         snake.unshift(newHead);
-        snake.pop();
-        snake[snake.length-1].drawType = "tail";
-    } else {
-        console.log("crash");
+        if (collides(newHead,food)) {
+            food = addFood();
+        } else {
+            snake.pop();
+            snake[snake.length-1].drawType = "tail";
+        }
     }
 }
+
+let addFood = function() {
+    let foodLocation = randomFrom(space);
+    let foodType = randomFrom(Object.keys(foodTypes));
+    let food = {x:foodLocation.x,y:foodLocation.y,drawType:foodType}
+    for (let body of snake) {
+        if (collides(food,body)) {
+            food = addFood();
+        }
+    }
+    return food;
+}
+
 
 
 /*
@@ -1188,11 +1549,11 @@ function drawGrid(level) {
 
 /**
  * 
- * @param {Drawable} body 
+ * @param {Sprite} body 
  */
 function drawSnakeBody(body) {
-    let gridX = toGrid(body.x);
-    let gridY = toGrid(body.y);
+    gridX = toGrid(body.x);
+    gridY = toGrid(body.y);
     let adjustment = curveDirections[body.drawType];
     ctx.arc(gridX, gridY, adjustment.size, 0, 2 * Math.PI);
     ctx.fill();
@@ -1200,25 +1561,32 @@ function drawSnakeBody(body) {
 
 /**
  * Take a wall object and draw it as a curve
- * @param {Drawable} wall 
+ * @param {Sprite} wall 
  */
 function drawWall(wall) {
-    let gridX = toGrid(wall.x);
-    let gridY = toGrid(wall.y);
+    gridX = toGrid(wall.x);
+    gridY = toGrid(wall.y);
     let adjustment = curveDirections[wall.drawType];
     ctx.moveTo(gridX+adjustment.startX, gridY+adjustment.startY);
     ctx.quadraticCurveTo(gridX, gridY, gridX+adjustment.endX, gridY+adjustment.endY);
     ctx.stroke();
 }
 
-
 function drawSnake() {
     ctx.beginPath();
     ctx.fillStyle = "green";
-    ctx.lineWidth = 10;
     for (let body of snake) {
         drawSnakeBody(body);
     }
+}
+
+function drawFood() {
+    gridX = toGrid(food.x);
+    gridY = toGrid(food.y);
+    ctx.beginPath();
+    ctx.fillStyle = foodTypes[food.drawType];
+    ctx.arc(gridX, gridY, 8, 0, 2 * Math.PI);
+    ctx.fill();
 }
 
 function drawWalls() {
@@ -1235,6 +1603,7 @@ function drawGame() {
     ctx.fillRect(0,0,canvas.width,canvas.height);
     drawWalls();
     drawSnake();
+    drawFood();
 }
 
 function updateGame() {
