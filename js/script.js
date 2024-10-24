@@ -1,8 +1,12 @@
 const canvas = document.getElementById("game-space");
 const ctx = canvas.getContext("2d");
 
-let walls, space, dx, dy, dxStored, dyStored, gridX, gridY, adjustment, gameRunning, gameSpeed, snake, blinky, pinky, inky, clyde, food, powers, powered;
-
+let walls, space, dx, dy, dxStored, dyStored, gridX, gridY, adjustment, snake, ghosts, food, powers, powered;
+let gameRunning = false;
+const powerTime = 80;
+const chaseTime = 120;
+const scatterTime = 80;
+const gameSpeed = 40;
 
 /**
  * @typedef Sprite
@@ -860,7 +864,7 @@ const curveDirections = {
     bottomToLeft:{startX:0,startY:10,endX:-10,endY:0},
     bottomToRight:{startX:0,startY:10,endX:10,endY:0},
     head:{size:15},
-    body:{size:13},
+    body:{size:12},
     tail:{size:11}
 };
 
@@ -869,6 +873,13 @@ const foodTypes = {
     grapes:"purple",
     peach:"pink"
 };
+
+const directions = {
+    up:[0,-0.25],
+    left:[-0.25,0],
+    down:[0,0.25],
+    right:[0.25,0]
+}
 
 walls = levelOneWalls;
 space = levelOneSpace;
@@ -891,26 +902,28 @@ function handleKeyPress(event) {
 
     const keyPressed = event.keyCode;
 
-    const goingUp = dy === -1;
-    const goingDown = dy === 1;
-    const goingRight = dx === 1;
-    const goingLeft = dx === -1;
+    const goingUp = dy === -0.25;
+    const goingDown = dy === 0.25;
+    const goingRight = dx === 0.25;
+    const goingLeft = dx === -0.25;
 
-    if (keyPressed === LEFT_KEY && !goingRight) {
-        dxStored = -1;
-        dyStored = 0;
-    }
     if (keyPressed === UP_KEY && !goingDown) {
-        dxStored = 0;
-        dyStored = -1;
+        dxStored = directions.up[0];
+        dyStored = directions.up[1];
     }
     if (keyPressed === RIGHT_KEY && !goingLeft) {
-        dxStored = 1;
-        dyStored = 0;
+        dxStored = directions.right[0];
+        dyStored = directions.right[1];
+        if (!gameRunning) { startGame(); }
     }
     if (keyPressed === DOWN_KEY && !goingUp) {
-        dxStored = 0;
-        dyStored = 1;
+        dxStored = directions.down[0];
+        dyStored = directions.down[1];
+    }
+    if (keyPressed === LEFT_KEY && !goingRight) {
+        dxStored = directions.left[0];
+        dyStored = directions.left[1];
+        if (!gameRunning) { startGame(); }
     }
 }
 
@@ -930,6 +943,8 @@ let randomFrom = array => array[Math.floor(Math.random()*array.length)];
  * @returns {number} Value of coord in canvas units
  */
 let toGrid = coord => coord*20+10;
+
+let isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
 
 
 // COLLISION TEST FUNCTIONS
@@ -959,14 +974,12 @@ let collidesWithArray = function(head,array) {
 // GAME DATA ALTERING FUNCTIONS
 
 function initialiseGame() {
-    gameSpeed = 150;
-
-    dxStored = 0;
-    dyStored = 0;
+    dx = dxStored;
+    dy = dyStored;
 
     snake = [
-        {x:13,y:23,drawType:"head"},
-        {x:13-dxStored,y:23,drawType:"tail"},
+        {x:13.5,y:23,drawType:"head"},
+        {x:13.5-dxStored,y:23,drawType:"tail"},
     ];
 
     food = addFood();
@@ -980,28 +993,38 @@ function initialiseGame() {
 
     powered = 0;
 
+    ghosts = {
+        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-0.25,dy:0,mode:"chase",timeLeft:chaseTime},target:{x:snake[0].x,y:snake[0].y,scatterX:27,scatterY:0}},
+        pinky:{sprite:{x:1,y:1,drawType:"pink"},movement:{dx:0.25,dy:0,mode:"chase",timeLeft:500},target:{x:snake[0].x,y:snake[0].y,scatterX:0,scatterY:0}},
+        inky:{sprite:{x:26,y:1,drawType:"blue"},movement:{dx:-0.25,dy:0,mode:"chase",timeLeft:500},target:{x:snake[0].x,y:snake[0].y,scatterX:27,scatterY:30}},
+        clyde:{sprite:{x:26,y:29,drawType:"yellow"},movement:{dx:-0.25,dy:0,mode:"chase",timeLeft:500},target:{x:snake[0].x,y:snake[0].y,scatterX:0,scatterY:30}}
+    }
+
     drawGame(walls);
 }
 
 function moveSnake() {
     let newHead;
+    let testHead;
+    let newTail;
     let collidesWithWall;
     let collidesWithSelf;
     let collidesWithFood;
     let collidesWithPower;
     let loops;
-    
-    powered ? powered -= 5 : powered = 0;
 
-    newHead = {x:snake[0].x+dxStored,y:snake[0].y+dyStored,drawType:"head"}
-    if (!collidesWithArray(newHead,walls)) {
+    powered ? powered-- : powered = 0;
+
+    newHead = {x:snake[0].x+dxStored*4,y:snake[0].y+dyStored*4,drawType:"head"}
+    if (!collidesWithArray(newHead,walls)&&isCentered(newHead)) {
         dx = dxStored;
         dy = dyStored;
     }
 
-    newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
+    newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"};
+    testHead = {x:snake[0].x+dx*4,y:snake[0].y+dy*4,drawType:"head"}
 
-    collidesWithWall = collidesWithArray(newHead,walls);
+    collidesWithWall = collidesWithArray(testHead,walls);
     collidesWithSelf = collidesWithArray(newHead,snake.slice(1)) && !powered;
     collidesWithFood = collides(newHead,food);
     collidesWithPower = collidesWithArray(newHead,powers);
@@ -1018,8 +1041,12 @@ function moveSnake() {
         console.log("dead");
         return;
     } else if (collidesWithPower) {
-        powered = 200;
+        powered = powerTime;
         powers = powers.filter((el) => el!==collidesWithPower);
+        for (let ghost of Object.values(ghosts)) {
+            ghost.movement.dx*=-1;
+            ghost.movement.dy*=-1;
+        }
     } else if (loops) {
         newHead.x -= 28*Math.sign(newHead.x)
     }
@@ -1028,9 +1055,86 @@ function moveSnake() {
     snake.unshift(newHead);
     if (collidesWithFood) {
         food = addFood();
+        newTail = {x:snake[snake.length-1].x,y:snake[snake.length-1].y,drawType:"tail"}
+        snake.push(newTail)
+        snake.push(newTail)
+        snake.push(newTail)
     } else {
         snake.pop();
         snake[snake.length-1].drawType = "tail";
+    }
+
+    
+}
+
+function moveGhost(ghost) {
+    let nextStep;
+    let possibleStep;
+    let reverseDirection;
+    let smallestDistance;
+    let distanceToTarget;
+    let collidesWithSnake;
+    let loops;
+
+    
+
+    if (!powered) {
+        console.log(ghost.movement.mode + ": " + ghost.movement.timeLeft)
+        ghost.movement.timeLeft--;
+    } else {
+        console.log("frightened: " + powered)
+    }
+
+    reverseDirection = [ghost.movement.dx*-1,ghost.movement.dy*-1];
+    if (!ghost.movement.timeLeft) {
+        ghost.movement.dx = reverseDirection[0];
+        ghost.movement.dy = reverseDirection[1];
+        if (ghost.movement.mode==="chase") {
+            ghost.movement.mode = "scatter";
+            ghost.movement.timeLeft = scatterTime;
+            ghost.target.x = ghost.target.scatterX;
+            ghost.target.y = ghost.target.scatterY;
+        } else if (ghost.movement.mode==="scatter") {
+            ghost.movement.mode = "chase";
+            ghost.movement.timeLeft = chaseTime;
+        }
+    }
+
+    if (ghost.movement.mode==="chase") {
+        ghost.target.x = snake[0].x;
+        ghost.target.y = snake[0].y;
+    }
+
+    nextStep = {x:ghost.sprite.x+ghost.movement.dx,y:ghost.sprite.y+ghost.movement.dy,drawType:ghost.sprite.drawType};
+
+    if (isCentered(nextStep)) {
+        smallestDistance = 10000;
+        for (let direction of Object.values(directions)) {
+            possibleStep = {x:nextStep.x+direction[0]*4,y:nextStep.y+direction[1]*4,drawType:nextStep.drawType}
+            collidesWithWall = collidesWithArray(possibleStep,walls);
+            if (!collidesWithWall&&!(reverseDirection[0]===direction[0]&&reverseDirection[1]===direction[1])) {
+                distanceToTarget = Math.abs(possibleStep.x-ghost.target.x)+Math.abs(possibleStep.y-ghost.target.y)
+                if (distanceToTarget < smallestDistance) {
+                    smallestDistance = distanceToTarget;
+                    ghost.movement.dx = direction[0];
+                    ghost.movement.dy = direction[1];
+                }
+            }
+        }
+    }
+    
+    loops = nextStep.x < 0 || nextStep.x > 27;
+
+    if (loops) {
+        nextStep.x -= 28*Math.sign(nextStep.x)
+    }
+    ghost.sprite = nextStep;
+
+}
+
+function moveGhosts() {
+    for (let ghost of Object.values(ghosts)) {
+        moveGhost(ghost)
     }
 }
 
@@ -1093,6 +1197,15 @@ function drawPower(power) {
     ctx.fill();
 }
 
+function drawGhost(ghost) {
+    gridX = toGrid(ghost.sprite.x);
+    gridY = toGrid(ghost.sprite.y);
+    ctx.beginPath();
+    ctx.fillStyle = powered ? "white" : ghost.sprite.drawType;
+    ctx.arc(gridX, gridY, 15, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
 function drawSnake() {
     ctx.fillStyle = powered ? "rgb(252 234 63 / 70%)" : "rgb(252 234 63 / 100%)"
     for (let body of snake) {
@@ -1115,6 +1228,12 @@ function drawPowers() {
     }
 }
 
+function drawGhosts() {
+    for (let ghost of Object.values(ghosts)) {
+        drawGhost(ghost);
+    }
+}
+
 function drawGame() {
     ctx.fillStyle = "black";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -1122,17 +1241,37 @@ function drawGame() {
     drawSnake();
     drawPowers();
     drawFood();
+    drawGhosts();
+}
+
+function drawGameStart() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    drawWalls();
+    drawSnake();
+    drawPowers();
+    drawGhosts();
 }
 
 function updateGame() {
-    moveSnake();
-    drawGame();
-    setTimeout(updateGame,gameSpeed); 
+    if (gameRunning) {
+        moveSnake();
+        moveGhosts();
+        drawGame();
+        setTimeout(updateGame,gameSpeed)
+    } else {
+        drawGameStart();
+        setTimeout(updateGame,gameSpeed)
+    }
+}
+
+function startGame() {
+    gameRunning = true;
+    initialiseGame()
 }
 
 initialiseGame();
-updateGame()
-
+updateGame();
 /*grid = [
     // Row 0
     [
