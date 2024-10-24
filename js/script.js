@@ -1,11 +1,11 @@
 const canvas = document.getElementById("game-space");
 const ctx = canvas.getContext("2d");
 
-let walls, space, dx, dy, dxStored, dyStored, gridX, gridY, adjustment, snake, ghosts, food, powers, powered;
+let dx, dy, dxStored, dyStored, gridX, gridY, adjustment, snake, ghosts, food, powers, powered;
 let gameRunning = false;
 const powerTime = 80;
-const chaseTime = 120;
-const scatterTime = 80;
+const chaseTime = 500;
+const scatterTime = 170;
 const gameSpeed = 40;
 
 /**
@@ -16,7 +16,7 @@ const gameSpeed = 40;
  * @property {"horz"|"vert"|"bottomToLeft"|"bottomToRight"|"topToLeft"|"topToRight"|"headN"|"headE"|"headS"|"headW"} drawType
  */
 
-const levelOneWalls = [
+const walls = [
     //Row 0
     {x:0,y:0,drawType:"bottomToRight"},
     {x:1,y:0,drawType:"horz"},
@@ -530,7 +530,7 @@ const levelOneWalls = [
     {x:27,y:30,drawType:"topToLeft"},
 ];
 
-const levelOneSpace = [
+const space = [
     //Row 1
     {x:1,y:1},
     {x:2,y:1},
@@ -856,6 +856,13 @@ const levelOneSpace = [
     {x:26,y:29}
 ];
 
+const ghostUpSpecialSpaces = [
+    {x:12,y:10,drawType:"none"},
+    {x:15,y:10,drawType:"none"},
+    {x:12,y:21,drawType:"none"},
+    {x:15,y:21,drawType:"none"}
+];
+
 const curveDirections = {
     vert:{startX:0,startY:-10,endX:0,endY:10},
     horz:{startX:-10,startY:0,endX:10,endY:0},
@@ -880,9 +887,6 @@ const directions = {
     down:[0,0.25],
     right:[0.25,0]
 }
-
-walls = levelOneWalls;
-space = levelOneSpace;
 
 
 // KEY PRESS EVENT HANDLING
@@ -994,10 +998,10 @@ function initialiseGame() {
     powered = 0;
 
     ghosts = {
-        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-0.25,dy:0,mode:"chase",timeLeft:chaseTime},target:{x:snake[0].x,y:snake[0].y,scatterX:27,scatterY:0}},
-        pinky:{sprite:{x:1,y:1,drawType:"pink"},movement:{dx:0.25,dy:0,mode:"chase",timeLeft:500},target:{x:snake[0].x,y:snake[0].y,scatterX:0,scatterY:0}},
-        inky:{sprite:{x:26,y:1,drawType:"blue"},movement:{dx:-0.25,dy:0,mode:"chase",timeLeft:500},target:{x:snake[0].x,y:snake[0].y,scatterX:27,scatterY:30}},
-        clyde:{sprite:{x:26,y:29,drawType:"yellow"},movement:{dx:-0.25,dy:0,mode:"chase",timeLeft:500},target:{x:snake[0].x,y:snake[0].y,scatterX:0,scatterY:30}}
+        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:25,scatterY:-2}},
+        pinky:{sprite:{x:1,y:1,drawType:"pink"},movement:{dx:0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:2,scatterY:-2}},
+        inky:{sprite:{x:26,y:1,drawType:"blue"},movement:{dx:-0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:27,scatterY:32}},
+        clyde:{sprite:{x:26,y:29,drawType:"orange"},movement:{dx:-0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:0,scatterY:32}}
     }
 
     drawGame(walls);
@@ -1031,14 +1035,14 @@ function moveSnake() {
     loops = newHead.x < 0 || newHead.x > 27;
 
     if (collidesWithWall) {
-        console.log("crash");
+        //console.log("crash");
         return;
     } else if (collidesWithSelf) {
         dx = 0;
         dy = 0;
         dxStored = 0;
         dyStored = 0;
-        console.log("dead");
+        //console.log("dead");
         return;
     } else if (collidesWithPower) {
         powered = powerTime;
@@ -1067,22 +1071,19 @@ function moveSnake() {
     
 }
 
-function moveGhost(ghost) {
+function moveGhost(ghost,name) {
     let nextStep;
     let possibleStep;
     let reverseDirection;
     let smallestDistance;
     let distanceToTarget;
+    let collidesWithWall;
+    let cantGoUp;
     let collidesWithSnake;
     let loops;
 
-    
-
     if (!powered) {
-        console.log(ghost.movement.mode + ": " + ghost.movement.timeLeft)
         ghost.movement.timeLeft--;
-    } else {
-        console.log("frightened: " + powered)
     }
 
     reverseDirection = [ghost.movement.dx*-1,ghost.movement.dy*-1];
@@ -1101,8 +1102,33 @@ function moveGhost(ghost) {
     }
 
     if (ghost.movement.mode==="chase") {
-        ghost.target.x = snake[0].x;
-        ghost.target.y = snake[0].y;
+        switch (name) {
+            case "blinky":
+                console.log("blinky");
+                ghost.target.x = snake[0].x;
+                ghost.target.y = snake[0].y;
+                break;
+            case "pinky":
+                console.log("pinky");
+                ghost.target.x = snake[0].x + dx*16;
+                ghost.target.y = snake[0].y + dy*16;
+                break;
+            case "inky":
+                console.log("inky");
+                ghost.target.x = snake[0].x + dx*8 + Math.abs(snake[0].x + dx*8 - ghosts["blinky"].sprite.x);
+                ghost.target.y = snake[0].y + dy*8 + Math.abs(snake[0].y + dx*8 - ghosts["blinky"].sprite.y);
+                break;
+            case "clyde":
+                console.log("clyde");
+                if (Math.sqrt(Math.abs(snake[0].x-ghost.sprite.x)^2+Math.abs(snake[0].y-ghost.sprite.y)^2)<8) {
+                    ghost.target.x = ghost.target.scatterX;
+                    ghost.target.y = ghost.target.scatterY;
+                } else {
+                    ghost.target.x = snake[0].x;
+                    ghost.target.y = snake[0].y;
+                }
+                break;
+        }
     }
 
     nextStep = {x:ghost.sprite.x+ghost.movement.dx,y:ghost.sprite.y+ghost.movement.dy,drawType:ghost.sprite.drawType};
@@ -1112,7 +1138,8 @@ function moveGhost(ghost) {
         for (let direction of Object.values(directions)) {
             possibleStep = {x:nextStep.x+direction[0]*4,y:nextStep.y+direction[1]*4,drawType:nextStep.drawType}
             collidesWithWall = collidesWithArray(possibleStep,walls);
-            if (!collidesWithWall&&!(reverseDirection[0]===direction[0]&&reverseDirection[1]===direction[1])) {
+            cantGoUp = direction[1]===-0.25&&collidesWithArray(possibleStep,ghostUpSpecialSpaces);
+            if (!collidesWithWall&&!(reverseDirection[0]===direction[0]&&reverseDirection[1]===direction[1])&&!cantGoUp) {
                 distanceToTarget = Math.abs(possibleStep.x-ghost.target.x)+Math.abs(possibleStep.y-ghost.target.y)
                 if (distanceToTarget < smallestDistance) {
                     smallestDistance = distanceToTarget;
@@ -1133,8 +1160,8 @@ function moveGhost(ghost) {
 }
 
 function moveGhosts() {
-    for (let ghost of Object.values(ghosts)) {
-        moveGhost(ghost)
+    for (let [ghostName,ghost] of Object.entries(ghosts)) {
+        moveGhost(ghost,ghostName)
     }
 }
 
