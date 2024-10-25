@@ -863,6 +863,149 @@ const ghostUpSpecialSpaces = [
     {x:15,y:21,drawType:"none"}
 ];
 
+const ghostPrisonPaths = {
+    blinky:[
+        {x:13.5,y:11},
+        {x:13.5,y:11.125},
+        {x:13.5,y:11.25},
+        {x:13.5,y:11.375},
+        {x:13.5,y:11.5},
+        {x:13.5,y:11.625},
+        {x:13.5,y:11.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:12},
+        {x:13.5,y:12.125},
+        {x:13.5,y:12.25},
+        {x:13.5,y:12.375},
+        {x:13.5,y:12.5},
+        {x:13.5,y:12.625},
+        {x:13.5,y:12.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:13},
+        {x:13.5,y:13.125},
+        {x:13.5,y:13.25},
+        {x:13.5,y:13.375},
+        {x:13.5,y:13.5},
+        {x:13.5,y:13.625},
+        {x:13.5,y:13.75},
+        {x:13.5,y:13.875},
+        {x:13.5,y:14}
+    ],
+    pinky:[
+        {x:13.5,y:11},
+        {x:13.5,y:11.125},
+        {x:13.5,y:11.25},
+        {x:13.5,y:11.375},
+        {x:13.5,y:11.5},
+        {x:13.5,y:11.625},
+        {x:13.5,y:11.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:12},
+        {x:13.5,y:12.125},
+        {x:13.5,y:12.25},
+        {x:13.5,y:12.375},
+        {x:13.5,y:12.5},
+        {x:13.5,y:12.625},
+        {x:13.5,y:12.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:13},
+        {x:13.5,y:13.125},
+        {x:13.5,y:13.25},
+        {x:13.5,y:13.375},
+        {x:13.5,y:13.5},
+        {x:13.5,y:13.625},
+        {x:13.5,y:13.75},
+        {x:13.5,y:13.875},
+        {x:13.5,y:14}
+    ],
+    inky:[
+        {x:13.5,y:11},
+        {x:13.5,y:11.125},
+        {x:13.5,y:11.25},
+        {x:13.5,y:11.375},
+        {x:13.5,y:11.5},
+        {x:13.5,y:11.625},
+        {x:13.5,y:11.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:12},
+        {x:13.5,y:12.125},
+        {x:13.5,y:12.25},
+        {x:13.5,y:12.375},
+        {x:13.5,y:12.5},
+        {x:13.5,y:12.625},
+        {x:13.5,y:12.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:13},
+        {x:13.5,y:13.125},
+        {x:13.5,y:13.25},
+        {x:13.5,y:13.375},
+        {x:13.5,y:13.5},
+        {x:13.5,y:13.625},
+        {x:13.5,y:13.75},
+        {x:13.5,y:13.875},
+        {x:13.5,y:14},
+        {x:13.375,y:14},
+        {x:13.25,y:14},
+        {x:13.125,y:14},
+        {x:13,y:14},
+        {x:12.875,y:14},
+        {x:12.75,y:14},
+        {x:12.625,y:14},
+        {x:12.5,y:14},
+        {x:12.375,y:14},
+        {x:12.25,y:14},
+        {x:12.125,y:14},
+        {x:12,y:14},
+        {x:11.875,y:14},
+        {x:11.75,y:14},
+        {x:11.625,y:14},
+        {x:11.5,y:14},
+    ],
+    clyde:[
+        {x:13.5,y:11},
+        {x:13.5,y:11.125},
+        {x:13.5,y:11.25},
+        {x:13.5,y:11.375},
+        {x:13.5,y:11.5},
+        {x:13.5,y:11.625},
+        {x:13.5,y:11.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:12},
+        {x:13.5,y:12.125},
+        {x:13.5,y:12.25},
+        {x:13.5,y:12.375},
+        {x:13.5,y:12.5},
+        {x:13.5,y:12.625},
+        {x:13.5,y:12.75},
+        {x:13.5,y:12.875},
+        {x:13.5,y:13},
+        {x:13.5,y:13.125},
+        {x:13.5,y:13.25},
+        {x:13.5,y:13.375},
+        {x:13.5,y:13.5},
+        {x:13.5,y:13.625},
+        {x:13.5,y:13.75},
+        {x:13.5,y:13.875},
+        {x:13.5,y:14},
+        {x:13.625,y:14},
+        {x:13.75,y:14},
+        {x:13.875,y:14},
+        {x:14,y:14},
+        {x:14.125,y:14},
+        {x:14.25,y:14},
+        {x:14.375,y:14},
+        {x:14.5,y:14},
+        {x:14.625,y:14},
+        {x:14.75,y:14},
+        {x:14.875,y:14},
+        {x:15,y:14},
+        {x:15.125,y:14},
+        {x:15.25,y:14},
+        {x:15.375,y:14},
+        {x:15.5,y:14},
+    ]
+};
+
 const curveDirections = {
     vert:{startX:0,startY:-10,endX:0,endY:10},
     horz:{startX:-10,startY:0,endX:10,endY:0},
@@ -882,10 +1025,10 @@ const foodTypes = {
 };
 
 const directions = {
-    up:[0,-0.25],
-    left:[-0.25,0],
-    down:[0,0.25],
-    right:[0.25,0]
+    up:{x:0,y:-1},
+    left:{x:-1,y:0},
+    down:{x:0,y:1},
+    right:{x:1,y:0}
 }
 
 
@@ -906,27 +1049,27 @@ function handleKeyPress(event) {
 
     const keyPressed = event.keyCode;
 
-    const goingUp = dy === -0.25;
-    const goingDown = dy === 0.25;
-    const goingRight = dx === 0.25;
-    const goingLeft = dx === -0.25;
+    const goingUp = dy === -1;
+    const goingDown = dy === 1;
+    const goingRight = dx === 1;
+    const goingLeft = dx === -1;
 
     if (keyPressed === UP_KEY && !goingDown) {
-        dxStored = directions.up[0];
-        dyStored = directions.up[1];
+        dxStored = directions.up.x;
+        dyStored = directions.up.y;
     }
     if (keyPressed === RIGHT_KEY && !goingLeft) {
-        dxStored = directions.right[0];
-        dyStored = directions.right[1];
+        dxStored = directions.right.x;
+        dyStored = directions.right.y;
         if (!gameRunning) { startGame(); }
     }
     if (keyPressed === DOWN_KEY && !goingUp) {
-        dxStored = directions.down[0];
-        dyStored = directions.down[1];
+        dxStored = directions.down.x;
+        dyStored = directions.down.y;
     }
     if (keyPressed === LEFT_KEY && !goingRight) {
-        dxStored = directions.left[0];
-        dyStored = directions.left[1];
+        dxStored = directions.left.x;
+        dyStored = directions.left.y;
         if (!gameRunning) { startGame(); }
     }
 }
@@ -998,10 +1141,10 @@ function initialiseGame() {
     powered = 0;
 
     ghosts = {
-        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:25,scatterY:-2}},
-        pinky:{sprite:{x:1,y:1,drawType:"pink"},movement:{dx:0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:2,scatterY:-2}},
-        inky:{sprite:{x:26,y:1,drawType:"blue"},movement:{dx:-0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:27,scatterY:32}},
-        clyde:{sprite:{x:26,y:29,drawType:"orange"},movement:{dx:-0.25,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:snake[0].x,y:snake[0].y,scatterX:0,scatterY:32}}
+        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-1,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:ghostPrisonPaths.pinky.length,entering:ghostPrisonPaths.pinky.length}},
+        pinky:{sprite:{x:13.5,y:14,drawType:"pink"},movement:{dx:1,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0}},
+        inky:{sprite:{x:11.5,y:14,drawType:"blue"},movement:{dx:-1,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:15,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0}},
+        clyde:{sprite:{x:15.5,y:14,drawType:"orange"},movement:{dx:-1,dy:0,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0}}
     }
 
     drawGame(walls);
@@ -1019,14 +1162,14 @@ function moveSnake() {
 
     powered ? powered-- : powered = 0;
 
-    newHead = {x:snake[0].x+dxStored*4,y:snake[0].y+dyStored*4,drawType:"head"}
+    newHead = {x:snake[0].x+dxStored,y:snake[0].y+dyStored,drawType:"head"}
     if (!collidesWithArray(newHead,walls)&&isCentered(newHead)) {
         dx = dxStored;
         dy = dyStored;
     }
 
-    newHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"};
-    testHead = {x:snake[0].x+dx*4,y:snake[0].y+dy*4,drawType:"head"}
+    newHead = {x:snake[0].x+dx/4,y:snake[0].y+dy/4,drawType:"head"};
+    testHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
 
     collidesWithWall = collidesWithArray(testHead,walls);
     collidesWithSelf = collidesWithArray(newHead,snake.slice(1)) && !powered;
@@ -1104,23 +1247,19 @@ function moveGhost(ghost,name) {
     if (ghost.movement.mode==="chase") {
         switch (name) {
             case "blinky":
-                console.log("blinky");
                 ghost.target.x = snake[0].x;
                 ghost.target.y = snake[0].y;
                 break;
             case "pinky":
-                console.log("pinky");
-                ghost.target.x = snake[0].x + dx*16;
-                ghost.target.y = snake[0].y + dy*16;
+                ghost.target.x = snake[0].x + dx*4;
+                ghost.target.y = snake[0].y + dy*4;
                 break;
             case "inky":
-                console.log("inky");
-                ghost.target.x = snake[0].x + dx*8 + Math.abs(snake[0].x + dx*8 - ghosts["blinky"].sprite.x);
-                ghost.target.y = snake[0].y + dy*8 + Math.abs(snake[0].y + dx*8 - ghosts["blinky"].sprite.y);
+                ghost.target.x = snake[0].x + dx*2 + snake[0].x + dx*2 - ghosts["blinky"].sprite.x;
+                ghost.target.y = snake[0].y + dy*2 + snake[0].y + dx*2 - ghosts["blinky"].sprite.y;
                 break;
             case "clyde":
-                console.log("clyde");
-                if (Math.sqrt(Math.abs(snake[0].x-ghost.sprite.x)^2+Math.abs(snake[0].y-ghost.sprite.y)^2)<8) {
+                if (Math.sqrt(Math.abs(snake[0].x-ghost.sprite.x)**2+Math.abs(snake[0].y-ghost.sprite.y)**2)<8) {
                     ghost.target.x = ghost.target.scatterX;
                     ghost.target.y = ghost.target.scatterY;
                 } else {
@@ -1131,20 +1270,21 @@ function moveGhost(ghost,name) {
         }
     }
 
-    nextStep = {x:ghost.sprite.x+ghost.movement.dx,y:ghost.sprite.y+ghost.movement.dy,drawType:ghost.sprite.drawType};
+    nextStep = {x:ghost.sprite.x+ghost.movement.dx/8,y:ghost.sprite.y+ghost.movement.dy/8,drawType:ghost.sprite.drawType};
+    //console.log(name + ": " + nextStep.x + "," + nextStep.y)
 
     if (isCentered(nextStep)) {
         smallestDistance = 10000;
         for (let direction of Object.values(directions)) {
-            possibleStep = {x:nextStep.x+direction[0]*4,y:nextStep.y+direction[1]*4,drawType:nextStep.drawType}
+            possibleStep = {x:nextStep.x+direction.x,y:nextStep.y+direction.y,drawType:nextStep.drawType}
             collidesWithWall = collidesWithArray(possibleStep,walls);
-            cantGoUp = direction[1]===-0.25&&collidesWithArray(possibleStep,ghostUpSpecialSpaces);
-            if (!collidesWithWall&&!(reverseDirection[0]===direction[0]&&reverseDirection[1]===direction[1])&&!cantGoUp) {
+            cantGoUp = direction.y===-1&&collidesWithArray(possibleStep,ghostUpSpecialSpaces);
+            if (!collidesWithWall&&!(reverseDirection[0]===direction.x&&reverseDirection[1]===direction.y)&&!cantGoUp) {
                 distanceToTarget = Math.abs(possibleStep.x-ghost.target.x)+Math.abs(possibleStep.y-ghost.target.y)
                 if (distanceToTarget < smallestDistance) {
                     smallestDistance = distanceToTarget;
-                    ghost.movement.dx = direction[0];
-                    ghost.movement.dy = direction[1];
+                    ghost.movement.dx = direction.x;
+                    ghost.movement.dy = direction.y;
                 }
             }
         }
@@ -1155,13 +1295,33 @@ function moveGhost(ghost,name) {
     if (loops) {
         nextStep.x -= 28*Math.sign(nextStep.x)
     }
+
     ghost.sprite = nextStep;
 
 }
 
 function moveGhosts() {
     for (let [ghostName,ghost] of Object.entries(ghosts)) {
-        moveGhost(ghost,ghostName)
+        //console.log(ghostName + " entering " + ghost.home.entering); 
+        if (ghost.home.inHouse) {
+            if (ghost.home.entering){
+                console.log(ghostName + " entering")
+                ghost.sprite.x = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].x;
+                ghost.sprite.y = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].y;
+                ghost.home.entering--;
+            } else if (snake.length > ghost.home.unlockLength){
+                ghost.sprite.x = ghostPrisonPaths[ghostName][ghost.home.leaving-1].x;
+                ghost.sprite.y = ghostPrisonPaths[ghostName][ghost.home.leaving-1].y;
+                ghost.home.leaving--;
+                if (!ghost.home.leaving) { ghost.home.inHouse = false; }
+            }
+        } else if (ghost.home.entering>0&&ghost.sprite.x===13.5&&ghost.sprite.y===11) {
+            console.log(ghostName + " knock knock")
+            ghost.home.inHouse = true;
+        } else {
+            console.log(ghostName + " moving")
+            moveGhost(ghost,ghostName)
+        }
     }
 }
 
@@ -1231,6 +1391,7 @@ function drawGhost(ghost) {
     ctx.fillStyle = powered ? "white" : ghost.sprite.drawType;
     ctx.arc(gridX, gridY, 15, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.fillRect(toGrid(ghost.target.x)-10,toGrid(ghost.target.y)-10,20,20)
 }
 
 function drawSnake() {
