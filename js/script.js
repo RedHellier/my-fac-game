@@ -7,6 +7,7 @@ const powerTime = 160;
 const chaseTime = 500;
 const scatterTime = 170;
 const gameSpeed = 40;
+const ghostSpeed = 1;
 
 /**
  * @typedef Sprite
@@ -866,142 +867,78 @@ const ghostUpSpecialSpaces = [
 const ghostPrisonPaths = {
     blinky:[
         {x:13.5,y:11},
-        {x:13.5,y:11.125},
         {x:13.5,y:11.25},
-        {x:13.5,y:11.375},
         {x:13.5,y:11.5},
-        {x:13.5,y:11.625},
         {x:13.5,y:11.75},
-        {x:13.5,y:11.875},
         {x:13.5,y:12},
-        {x:13.5,y:12.125},
         {x:13.5,y:12.25},
-        {x:13.5,y:12.375},
         {x:13.5,y:12.5},
-        {x:13.5,y:12.625},
         {x:13.5,y:12.75},
-        {x:13.5,y:12.875},
         {x:13.5,y:13},
-        {x:13.5,y:13.125},
         {x:13.5,y:13.25},
-        {x:13.5,y:13.375},
         {x:13.5,y:13.5},
-        {x:13.5,y:13.625},
         {x:13.5,y:13.75},
-        {x:13.5,y:13.875},
         {x:13.5,y:14}
     ],
     pinky:[
         {x:13.5,y:11},
-        {x:13.5,y:11.125},
         {x:13.5,y:11.25},
-        {x:13.5,y:11.375},
         {x:13.5,y:11.5},
-        {x:13.5,y:11.625},
         {x:13.5,y:11.75},
-        {x:13.5,y:11.875},
         {x:13.5,y:12},
-        {x:13.5,y:12.125},
         {x:13.5,y:12.25},
-        {x:13.5,y:12.375},
         {x:13.5,y:12.5},
-        {x:13.5,y:12.625},
         {x:13.5,y:12.75},
-        {x:13.5,y:12.875},
         {x:13.5,y:13},
-        {x:13.5,y:13.125},
         {x:13.5,y:13.25},
-        {x:13.5,y:13.375},
         {x:13.5,y:13.5},
-        {x:13.5,y:13.625},
         {x:13.5,y:13.75},
-        {x:13.5,y:13.875},
         {x:13.5,y:14}
     ],
     inky:[
         {x:13.5,y:11},
-        {x:13.5,y:11.125},
         {x:13.5,y:11.25},
-        {x:13.5,y:11.375},
         {x:13.5,y:11.5},
-        {x:13.5,y:11.625},
         {x:13.5,y:11.75},
-        {x:13.5,y:11.875},
         {x:13.5,y:12},
-        {x:13.5,y:12.125},
         {x:13.5,y:12.25},
-        {x:13.5,y:12.375},
         {x:13.5,y:12.5},
-        {x:13.5,y:12.625},
         {x:13.5,y:12.75},
-        {x:13.5,y:12.875},
         {x:13.5,y:13},
-        {x:13.5,y:13.125},
         {x:13.5,y:13.25},
-        {x:13.5,y:13.375},
         {x:13.5,y:13.5},
-        {x:13.5,y:13.625},
         {x:13.5,y:13.75},
-        {x:13.5,y:13.875},
         {x:13.5,y:14},
-        {x:13.375,y:14},
         {x:13.25,y:14},
-        {x:13.125,y:14},
         {x:13,y:14},
-        {x:12.875,y:14},
         {x:12.75,y:14},
-        {x:12.625,y:14},
         {x:12.5,y:14},
-        {x:12.375,y:14},
         {x:12.25,y:14},
-        {x:12.125,y:14},
         {x:12,y:14},
-        {x:11.875,y:14},
         {x:11.75,y:14},
-        {x:11.625,y:14},
         {x:11.5,y:14},
     ],
     clyde:[
         {x:13.5,y:11},
-        {x:13.5,y:11.125},
         {x:13.5,y:11.25},
-        {x:13.5,y:11.375},
         {x:13.5,y:11.5},
-        {x:13.5,y:11.625},
         {x:13.5,y:11.75},
-        {x:13.5,y:11.875},
         {x:13.5,y:12},
-        {x:13.5,y:12.125},
         {x:13.5,y:12.25},
-        {x:13.5,y:12.375},
         {x:13.5,y:12.5},
-        {x:13.5,y:12.625},
         {x:13.5,y:12.75},
-        {x:13.5,y:12.875},
         {x:13.5,y:13},
-        {x:13.5,y:13.125},
         {x:13.5,y:13.25},
-        {x:13.5,y:13.375},
         {x:13.5,y:13.5},
-        {x:13.5,y:13.625},
         {x:13.5,y:13.75},
-        {x:13.5,y:13.875},
         {x:13.5,y:14},
-        {x:13.625,y:14},
         {x:13.75,y:14},
-        {x:13.875,y:14},
         {x:14,y:14},
-        {x:14.125,y:14},
         {x:14.25,y:14},
-        {x:14.375,y:14},
         {x:14.5,y:14},
-        {x:14.625,y:14},
         {x:14.75,y:14},
-        {x:14.875,y:14},
         {x:15,y:14},
-        {x:15.125,y:14},
         {x:15.25,y:14},
-        {x:15.375,y:14},
         {x:15.5,y:14},
     ]
 };
@@ -1141,10 +1078,10 @@ function initialiseGame() {
     powered = 0;
 
     ghosts = {
-        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:0,entering:0}},
-        pinky:{sprite:{x:13.5,y:14,drawType:"pink"},movement:{dx:1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0}},
-        inky:{sprite:{x:11.5,y:14,drawType:"blue"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:15,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0}},
-        clyde:{sprite:{x:15.5,y:14,drawType:"orange"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0}}
+        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-1,dy:0,speed:0,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:0,entering:0}},
+        pinky:{sprite:{x:13.5,y:14,drawType:"pink"},movement:{dx:0,dy:0,speed:0,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0}},
+        inky:{sprite:{x:11.5,y:14,drawType:"blue"},movement:{dx:0,dy:0,speed:0,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:15,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0}},
+        clyde:{sprite:{x:15.5,y:14,drawType:"orange"},movement:{dx:0,dy:0,speed:0,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0}}
     }
 
     drawGame(walls);
@@ -1178,14 +1115,12 @@ function moveSnake() {
     loops = newHead.x < 0 || newHead.x > 27;
 
     if (collidesWithWall) {
-        //console.log("crash");
         return;
     } else if (collidesWithSelf) {
         dx = 0;
         dy = 0;
         dxStored = 0;
         dyStored = 0;
-        //console.log("dead");
         return;
     } else if (collidesWithPower) {
         powered = powerTime;
@@ -1226,17 +1161,6 @@ function moveGhost(ghost,name) {
     let loops;
 
     reverseDirection = [ghost.movement.dx*-1,ghost.movement.dy*-1];
-    if (!ghost.movement.timeLeft) {
-        ghost.movement.dx = reverseDirection[0];
-        ghost.movement.dy = reverseDirection[1];
-        if (ghost.movement.mode==="chase") {
-            ghost.movement.mode = "scatter";
-            ghost.movement.timeLeft = scatterTime;
-        } else if (ghost.movement.mode==="scatter") {
-            ghost.movement.mode = "chase";
-            ghost.movement.timeLeft = chaseTime;
-        }
-    }
 
     if (ghost.movement.mode==="chase"&&!ghost.home.leaving) {
         switch (name) {
@@ -1267,8 +1191,7 @@ function moveGhost(ghost,name) {
         ghost.target.y = ghost.target.scatterY;
     }
 
-    nextStep = {x:ghost.sprite.x+ghost.movement.dx/ghost.movement.speed,y:ghost.sprite.y+ghost.movement.dy/ghost.movement.speed,drawType:ghost.sprite.drawType};
-    //console.log(name + ": " + nextStep.x + "," + nextStep.y)
+    nextStep = {x:ghost.sprite.x+ghost.movement.dx/4,y:ghost.sprite.y+ghost.movement.dy/4,drawType:ghost.sprite.drawType};
 
     if (isCentered(nextStep)) {
         smallestDistance = 10000;
@@ -1288,20 +1211,27 @@ function moveGhost(ghost,name) {
     }
     
     collidesWithSnake = collidesWithArray(nextStep,snake);
-    loops = nextStep.x < 0 || nextStep.x > 27;
+    loops = nextStep.x < 0 || nextStep.x > 27.75;
 
-    if (collidesWithSnake.drawType === "head") {
-        if (powered) {
+    if (powered) {
+        if (collidesWithSnake) {
             ghost.target.x = 13.5;
             ghost.target.y = 11;
-            ghost.movement.speed = 4;
+            ghost.movement.speed = 1;
             ghost.home.entering = ghostPrisonPaths[name].length;
             ghost.home.leaving = ghostPrisonPaths[name].length;
-            console.log(name + ": " +ghost.home.entering);
+        }
+    }
+
+    /*if (collidesWithSnake.drawType === "head") {
+        if (powered) {
+            
         }
     } else if (collidesWithSnake.drawType === "body") {
     } else if (collidesWithSnake.drawType === "tail") {
-    } else if (loops) {
+    } else {}*/
+    
+    if (loops) {
         nextStep.x -= 28*Math.sign(nextStep.x)
     }
 
@@ -1315,22 +1245,45 @@ function moveGhosts() {
         if (!powered) {
             ghost.movement.timeLeft--;
         }
-
-        if (ghost.home.inHouse) {
-            if (ghost.home.entering){
-                ghost.sprite.x = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].x;
-                ghost.sprite.y = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].y;
-                ghost.home.entering--;
-            } else if (snake.length > ghost.home.unlockLength){
-                ghost.sprite.x = ghostPrisonPaths[ghostName][ghost.home.leaving-1].x;
-                ghost.sprite.y = ghostPrisonPaths[ghostName][ghost.home.leaving-1].y;
-                ghost.home.leaving--;
-                if (!ghost.home.leaving) { ghost.home.inHouse = false; }
+        
+        if (!ghost.movement.timeLeft) {
+            ghost.movement.dx *= -1;
+            ghost.movement.dy *= -1;
+            if (ghost.movement.mode==="chase") {
+                ghost.movement.mode = "scatter";
+                ghost.movement.timeLeft = scatterTime;
+            } else if (ghost.movement.mode==="scatter") {
+                ghost.movement.mode = "chase";
+                ghost.movement.timeLeft = chaseTime;
             }
-        } else if (ghost.home.entering&&ghost.sprite.x===13.5&&ghost.sprite.y===11) {
+        }
+
+        if (ghost.home.entering&&ghost.sprite.x===13.5&&ghost.sprite.y===11) {
             ghost.home.inHouse = true;
+        }
+
+        if (ghost.movement.speed === 0) {
+            ghost.movement.speed = ghostSpeed;
+            if (ghost.home.inHouse) {
+                if (ghost.home.entering){
+                    ghost.sprite.x = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].x;
+                    ghost.sprite.y = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].y;
+                    ghost.home.entering--;
+                } else if (snake.length > ghost.home.unlockLength){
+                    ghost.sprite.x = ghostPrisonPaths[ghostName][ghost.home.leaving-1].x;
+                    ghost.sprite.y = ghostPrisonPaths[ghostName][ghost.home.leaving-1].y;
+                    ghost.home.leaving--;
+                    if (!ghost.home.leaving) { 
+                        ghost.movement.speed = 1;
+                        ghost.movement.dx = -1;
+                        ghost.home.inHouse = false; 
+                    }
+                }
+            } else {
+                moveGhost(ghost,ghostName)
+            }
         } else {
-            moveGhost(ghost,ghostName)
+            ghost.movement.speed--;
         }
 
     }
@@ -1396,12 +1349,22 @@ function drawPower(power) {
 }
 
 function drawGhost(ghost) {
-    gridX = toGrid(ghost.sprite.x);
-    gridY = toGrid(ghost.sprite.y);
+    if (ghost.sprite.drawType === "red") { console.log(ghost.sprite.x + "," + ghost.sprite.y)}
+    
+    if (ghost.movement.speed === 0) {
+        gridX = toGrid(ghost.sprite.x);
+        gridY = toGrid(ghost.sprite.y);
+    } else {
+        gridX = toGrid(ghost.sprite.x - 0.125*ghost.movement.dx);
+        gridY = toGrid(ghost.sprite.y - 0.125*ghost.movement.dy);
+    }
     ctx.beginPath();
     ctx.fillStyle = ghost.home.entering ? "grey" : powered ? "white" : ghost.sprite.drawType;
+    ctx.lineWidth = 5 * ghost.movement.timeLeft / (ghost.movement.mode === "chase" ? chaseTime : scatterTime);
+    ctx.strokeStyle = ghost.movement.mode === "chase" ? "red" : "cyan";
     ctx.arc(gridX, gridY, 15, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.stroke();
 }
 
 function drawSnake() {
