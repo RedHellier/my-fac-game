@@ -1103,6 +1103,7 @@ let isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
  * @returns {boolean} true if they have the same coordinates
  */
 let collides = (a,b) => a.x===b.x&&a.y===b.y;
+let collidesRounded = (a,b) => Math.round(a.x)===Math.round(b.x)&&Math.round(a.y)===Math.round(b.y);
 
 /**
  * Checks for collision between a Sprite and an Array on Grid
@@ -1113,6 +1114,13 @@ let collides = (a,b) => a.x===b.x&&a.y===b.y;
 let collidesWithArray = function(head,array) {
     for (let el of array) {
         if (collides(head,el)) { return el }
+    }
+    return false;
+}
+
+let collidesRoundedWithArray = function(head,array) {
+    for (let el of array) {
+        if (collidesRounded(head,el)) { return el }
     }
     return false;
 }
@@ -1172,20 +1180,20 @@ function moveSnake() {
     testHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
 
     collidesWithWall = collidesWithArray(testHead,walls);
-    collidesWithSelf = collidesWithArray(newHead,snake.slice(1)) && !powered;
+    collidesWithSelf = collidesWithArray(newHead,snake.slice(4)) && !powered;
     collidesWithFood = collides(newHead,food);
     collidesWithPower = collidesWithArray(newHead,powers);
     loops = newHead.x < 0 || newHead.x > 27;
 
     if (collidesWithWall) {
-        //console.log("crash");
+        console.log("crash");
         return;
     } else if (collidesWithSelf) {
         dx = 0;
         dy = 0;
         dxStored = 0;
         dyStored = 0;
-        //console.log("dead");
+        console.log("dead");
         return;
     } else if (collidesWithPower) {
         powered = powerTime;
@@ -1226,17 +1234,6 @@ function moveGhost(ghost,name) {
     let loops;
 
     reverseDirection = [ghost.movement.dx*-1,ghost.movement.dy*-1];
-    if (!ghost.movement.timeLeft) {
-        ghost.movement.dx = reverseDirection[0];
-        ghost.movement.dy = reverseDirection[1];
-        if (ghost.movement.mode==="chase") {
-            ghost.movement.mode = "scatter";
-            ghost.movement.timeLeft = scatterTime;
-        } else if (ghost.movement.mode==="scatter") {
-            ghost.movement.mode = "chase";
-            ghost.movement.timeLeft = chaseTime;
-        }
-    }
 
     if (ghost.movement.mode==="chase"&&!ghost.home.leaving) {
         switch (name) {
@@ -1268,7 +1265,7 @@ function moveGhost(ghost,name) {
     }
 
     nextStep = {x:ghost.sprite.x+ghost.movement.dx/ghost.movement.speed,y:ghost.sprite.y+ghost.movement.dy/ghost.movement.speed,drawType:ghost.sprite.drawType};
-    //console.log(name + ": " + nextStep.x + "," + nextStep.y)
+    console.log(name + ": " + nextStep.x + "," + nextStep.y)
 
     if (isCentered(nextStep)) {
         smallestDistance = 10000;
@@ -1287,18 +1284,15 @@ function moveGhost(ghost,name) {
         }
     }
     
-    collidesWithSnake = collidesWithArray(nextStep,snake);
-    loops = nextStep.x < 0 || nextStep.x > 27;
+    collidesWithSnake = collidesRoundedWithArray(ghost.sprite,snake);
+    loops = nextStep.x < -0.5 || nextStep.x > 27.5;
 
-    if (collidesWithSnake.drawType === "head") {
-        if (powered) {
-            ghost.target.x = 13.5;
-            ghost.target.y = 11;
-            ghost.movement.speed = 4;
-            ghost.home.entering = ghostPrisonPaths[name].length;
-            ghost.home.leaving = ghostPrisonPaths[name].length;
-            console.log(name + ": " +ghost.home.entering);
-        }
+    if (collidesWithSnake&&powered) {
+        ghost.target.x = 13.5;
+        ghost.target.y = 11;
+        ghost.home.entering = ghostPrisonPaths[name].length;
+        ghost.home.leaving = ghostPrisonPaths[name].length;
+    } else if (collidesWithSnake.drawType === "head") {
     } else if (collidesWithSnake.drawType === "body") {
     } else if (collidesWithSnake.drawType === "tail") {
     } else if (loops) {
@@ -1314,6 +1308,18 @@ function moveGhosts() {
         
         if (!powered) {
             ghost.movement.timeLeft--;
+        }
+        
+        if (!ghost.movement.timeLeft) {
+            ghost.movement.dx *= -1;
+            ghost.movement.dy *= 1;
+            if (ghost.movement.mode==="chase") {
+                ghost.movement.mode = "scatter";
+                ghost.movement.timeLeft = scatterTime;
+            } else if (ghost.movement.mode==="scatter") {
+                ghost.movement.mode = "chase";
+                ghost.movement.timeLeft = chaseTime;
+            }
         }
 
         if (ghost.home.inHouse) {
