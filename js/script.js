@@ -532,11 +532,6 @@ const walls = [
 
 const space = [
     //Row 1
-    {x:1,y:1},
-    {x:2,y:1},
-    {x:3,y:1},
-    {x:4,y:1},
-    {x:5,y:1},
     {x:6,y:1},
     {x:7,y:1},
     {x:8,y:1},
@@ -551,30 +546,21 @@ const space = [
     {x:19,y:1},
     {x:20,y:1},
     {x:21,y:1},
-    {x:22,y:1},
-    {x:23,y:1},
-    {x:24,y:1},
-    {x:25,y:1},
-    {x:26,y:1},
     //Row 2
-    {x:1,y:2},
     {x:6,y:2},
     {x:12,y:2},
     {x:15,y:2},
     {x:21,y:2},
-    {x:26,y:2},
     //Row 3
     {x:6,y:3},
     {x:12,y:3},
     {x:15,y:3},
     {x:21,y:3},
     //Row 4
-    {x:1,y:4},
     {x:6,y:4},
     {x:12,y:4},
     {x:15,y:4},
     {x:21,y:4},
-    {x:26,y:4},
     //Row 5
     {x:1,y:5},
     {x:2,y:5},
@@ -723,11 +709,6 @@ const space = [
     {x:18,y:19},
     {x:21,y:19},
     //Row 20
-    {x:1,y:20},
-    {x:2,y:20},
-    {x:3,y:20},
-    {x:4,y:20},
-    {x:5,y:20},
     {x:6,y:20},
     {x:7,y:20},
     {x:8,y:20},
@@ -742,28 +723,17 @@ const space = [
     {x:19,y:20},
     {x:20,y:20},
     {x:21,y:20},
-    {x:22,y:20},
-    {x:23,y:20},
-    {x:24,y:20},
-    {x:25,y:20},
-    {x:26,y:20},
     //Row 21
-    {x:1,y:21},
     {x:6,y:21},
     {x:12,y:21},
     {x:15,y:21},
     {x:21,y:21},
-    {x:26,y:21},
     //Row 22
-    {x:1,y:22},
     {x:6,y:22},
     {x:12,y:22},
     {x:15,y:22},
     {x:21,y:22},
-    {x:26,y:22},
     //Row 23
-    {x:2,y:23},
-    {x:3,y:23},
     {x:6,y:23},
     {x:7,y:23},
     {x:8,y:23},
@@ -780,22 +750,16 @@ const space = [
     {x:19,y:23},
     {x:20,y:23},
     {x:21,y:23},
-    {x:24,y:23},
-    {x:25,y:23},
     //Row 24
-    {x:3,y:24},
     {x:6,y:24},
     {x:9,y:24},
     {x:18,y:24},
     {x:21,y:24},
-    {x:24,y:24},
     //Row 25
-    {x:3,y:25},
     {x:6,y:25},
     {x:9,y:25},
     {x:18,y:25},
     {x:21,y:25},
-    {x:24,y:25},
     //Row 26
     {x:1,y:26},
     {x:2,y:26},
@@ -1287,15 +1251,19 @@ function moveGhost(ghost,name) {
     collidesWithSnake = collidesRoundedWithArray(ghost.sprite,snake);
     loops = nextStep.x < -0.5 || nextStep.x > 27.5;
 
-    if (collidesWithSnake&&powered) {
-        ghost.target.x = 13.5;
-        ghost.target.y = 11;
-        ghost.home.entering = ghostPrisonPaths[name].length;
-        ghost.home.leaving = ghostPrisonPaths[name].length;
-    } else if (collidesWithSnake.drawType === "head") {
-    } else if (collidesWithSnake.drawType === "body") {
-    } else if (collidesWithSnake.drawType === "tail") {
-    } else if (loops) {
+    if (collidesWithSnake&&ghost.home.leaving===0) {
+        if (powered) {
+            ghost.target.x = 13.5;
+            ghost.target.y = 11;
+            ghost.home.entering = ghostPrisonPaths[name].length;
+            ghost.home.leaving = ghostPrisonPaths[name].length;
+        } else if (collidesWithSnake.drawType === "head") {
+            gameRunning = false;
+        } else {
+            snake = snake.slice(0,snake.indexOf(collidesWithSnake));
+        }
+    }
+    if (loops) {
         nextStep.x -= 28*Math.sign(nextStep.x)
     }
 
