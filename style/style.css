@@ -15,15 +15,39 @@ body {
     margin: 0;
 }
 
-#game-space {
+#game-border {
     background-color: black;
-    border: solid black 1px;
+    border: solid yellow 4px;
     border-radius: 20px;
     width: 98vw;
     max-width: 566px;
     height: min-content;
     max-height:  626px;
     margin: 20px 0;
+    position: relative;
+}
+
+#game-space {
+    border-radius: 20px;
+    width: 98vw;
+    max-width: 566px;
+    height: min-content;
+    max-height:  626px;
+}
+
+#start-screen {
+    position: absolute;
+    background-color: black;
+    border-radius: 20px;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    z-index: 2;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #game-keys {
