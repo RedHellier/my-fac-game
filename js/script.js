@@ -3,10 +3,16 @@ const ctx = canvas.getContext("2d");
 
 let dx, dy, dxStored, dyStored, gridX, gridY, adjustment, snake, ghosts, food, powers, powered;
 let gameRunning = false;
+
 const powerTime = 200;
 const chaseTime = 500;
 const scatterTime = 170;
 const gameSpeed = 40;
+
+const goingUp = dy === -1;
+const goingDown = dy === 1;
+const goingRight = dx === 1;
+const goingLeft = dx === -1;
 
 /**
  * @typedef Sprite
@@ -1013,38 +1019,52 @@ function handleKeyPress(event) {
 
     const keyPressed = event.keyCode;
 
-    const goingUp = dy === -1;
-    const goingDown = dy === 1;
-    const goingRight = dx === 1;
-    const goingLeft = dx === -1;
+    if (keyPressed === UP_KEY) {
+        inputUp();
+    }
+    if (keyPressed === RIGHT_KEY) {
+        inputRight();
+    }
+    if (keyPressed === DOWN_KEY) {
+        inputDown();
+    }
+    if (keyPressed === LEFT_KEY) {
+        inputLeft();
+    }
+}
 
-    if (keyPressed === UP_KEY && !goingDown) {
+const inputUp = function() {
+    console.log("dy:"+dy);
+    if (!(dy === 1)) {
         dxStored = directions.up.x;
         dyStored = directions.up.y;
     }
-    if (keyPressed === RIGHT_KEY && !goingLeft) {
-        dxStored = directions.right.x;
-        dyStored = directions.right.y;
-        if (!gameRunning) { startGame(); }
-    }
-    if (keyPressed === DOWN_KEY && !goingUp) {
+}
+
+const inputDown = function() {
+    console.log("dy:"+dy);
+    if (!(dy === -1)) {
         dxStored = directions.down.x;
         dyStored = directions.down.y;
     }
-    if (keyPressed === LEFT_KEY && !goingRight) {
+}
+
+const inputLeft = function() {
+    console.log("dx:"+dx);
+    if (!(dx === 1)) {
         dxStored = directions.left.x;
         dyStored = directions.left.y;
         if (!gameRunning) { startGame(); }
     }
 }
 
-document.getElementById("start-button").onclick = function() {
-    document.getElementById("start-screen").style.display = "none";
-    pressStart();
-}
-
-function handleButtonPress(event) {
-
+const inputRight = function() {
+    console.log("dx:"+dx);
+    if (!(dx === -1)) {
+        dxStored = directions.right.x;
+        dyStored = directions.right.y;
+        if (!gameRunning) { startGame(); }
+    }
 }
 
 
@@ -1388,16 +1408,12 @@ function drawGhost(ghost) {
     ctx.beginPath();
     ctx.arc(gridX, gridY, 15, 0, 2 * Math.PI);
     if (ghost.home.entering) {
-        console.log("hometime");
         ctx.fillStyle = "rgb(255 255 255 / 10%)";
     } else if (powered > 50 || (powered%10 < 5 && powered > 0)) {
-        console.log("blue power");
         ctx.fillStyle = "#2121DE";
     } else if (powered%10 >= 5) {
-        console.log("white power");
         ctx.fillStyle = "white";
     } else {
-        console.log(ghost.sprite.drawType);
         ctx.fillStyle = ghost.sprite.drawType;
     }
     ctx.fill();
@@ -1465,6 +1481,7 @@ function startGame() {
 }
 
 function pressStart() {
+    document.getElementById("start-screen").style.display = "none";
     initialiseGame();
     updateGame();
 }
