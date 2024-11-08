@@ -9,11 +9,6 @@ const chaseTime = 500;
 const scatterTime = 170;
 const gameSpeed = 40;
 
-const goingUp = dy === -1;
-const goingDown = dy === 1;
-const goingRight = dx === 1;
-const goingLeft = dx === -1;
-
 /**
  * @typedef Sprite
  * @type {object}
@@ -1017,52 +1012,30 @@ function handleKeyPress(event) {
     const DOWN_KEY = 40;
     const SPACE_KEY = 32;
 
-    const keyPressed = event.keyCode;
+    const goingUp = dy === -1;
+    const goingDown = dy === 1;
+    const goingRight = dx === 1;
+    const goingLeft = dx === -1;
 
-    if (keyPressed === UP_KEY) {
-        inputUp();
-    }
-    if (keyPressed === RIGHT_KEY) {
-        inputRight();
-    }
-    if (keyPressed === DOWN_KEY) {
-        inputDown();
-    }
-    if (keyPressed === LEFT_KEY) {
-        inputLeft();
-    }
-}
+    const keyPressed = event.keyCode || event;
+    console.log(keyPressed)
 
-const inputUp = function() {
-    console.log("dy:"+dy);
-    if (!(dy === 1)) {
+    if (keyPressed === UP_KEY && !goingDown) {
         dxStored = directions.up.x;
         dyStored = directions.up.y;
     }
-}
-
-const inputDown = function() {
-    console.log("dy:"+dy);
-    if (!(dy === -1)) {
+    if (keyPressed === RIGHT_KEY && !goingLeft) {
+        dxStored = directions.right.x;
+        dyStored = directions.right.y;
+        if (!gameRunning) { startGame(); }
+    }
+    if (keyPressed === DOWN_KEY && !goingUp) {
         dxStored = directions.down.x;
         dyStored = directions.down.y;
     }
-}
-
-const inputLeft = function() {
-    console.log("dx:"+dx);
-    if (!(dx === 1)) {
+    if (keyPressed === LEFT_KEY && !goingRight) {
         dxStored = directions.left.x;
         dyStored = directions.left.y;
-        if (!gameRunning) { startGame(); }
-    }
-}
-
-const inputRight = function() {
-    console.log("dx:"+dx);
-    if (!(dx === -1)) {
-        dxStored = directions.right.x;
-        dyStored = directions.right.y;
         if (!gameRunning) { startGame(); }
     }
 }
@@ -1127,7 +1100,7 @@ function initialiseGame() {
 
     snake = [
         {x:13.5,y:23,drawType:"head"},
-        {x:13.5-dxStored,y:23,drawType:"tail"},
+        {x:13.5-dxStored/4,y:23,drawType:"tail"}
     ];
 
     food = addFood();
@@ -1144,8 +1117,8 @@ function initialiseGame() {
     ghosts = {
         blinky:{sprite:{x:13.5,y:11,drawType:"rgb(255 5 0)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:0,entering:0}},
         pinky:{sprite:{x:13.5,y:14,drawType:"rgb(226 146 189)"},movement:{dx:1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0}},
-        inky:{sprite:{x:11.5,y:14,drawType:"rgb(7 180 219)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:15,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0}},
-        clyde:{sprite:{x:15.5,y:14,drawType:"rgb(228 148 0)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0}}
+        inky:{sprite:{x:11.5,y:14,drawType:"rgb(7 180 219)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:10,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0}},
+        clyde:{sprite:{x:15.5,y:14,drawType:"rgb(228 148 0)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:60,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0}}
     }
 
     drawGame(walls);
@@ -1325,7 +1298,7 @@ function moveGhosts() {
                 ghost.sprite.x = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].x;
                 ghost.sprite.y = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].y;
                 ghost.home.entering--;
-            } else if (snake.length > ghost.home.unlockLength){
+            } else if (snake.length > ghost.home.unlockLength || (0<ghost.home.leaving && ghost.home.leaving<ghostPrisonPaths[ghostName].length)){
                 ghost.sprite.x = ghostPrisonPaths[ghostName][ghost.home.leaving-1].x;
                 ghost.sprite.y = ghostPrisonPaths[ghostName][ghost.home.leaving-1].y;
                 ghost.home.leaving--;
@@ -1477,11 +1450,14 @@ function updateGame() {
 
 function startGame() {
     gameRunning = true;
-    initialiseGame()
+    initialiseGame();
 }
 
 function pressStart() {
     document.getElementById("start-screen").style.display = "none";
+    dxStored=0;
+    dyStored=0;
     initialiseGame();
     updateGame();
 }
+
