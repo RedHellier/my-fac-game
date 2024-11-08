@@ -983,9 +983,9 @@ const curveDirections = {
 };
 
 const foodTypes = {
-    cherry:"red",
-    grapes:"purple",
-    peach:"pink"
+    cherry:"#FF0100",
+    melon:"#00FF01",
+    peach:"#FFB752"
 };
 
 const directions = {
@@ -1113,10 +1113,10 @@ function initialiseGame() {
     powered = 0;
 
     ghosts = {
-        blinky:{sprite:{x:13.5,y:11,drawType:"red"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:0,entering:0}},
-        pinky:{sprite:{x:13.5,y:14,drawType:"pink"},movement:{dx:1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0}},
-        inky:{sprite:{x:11.5,y:14,drawType:"blue"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:15,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0}},
-        clyde:{sprite:{x:15.5,y:14,drawType:"orange"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0}}
+        blinky:{sprite:{x:13.5,y:11,drawType:"rgb(255 5 0)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:0,entering:0}},
+        pinky:{sprite:{x:13.5,y:14,drawType:"rgb(226 146 189)"},movement:{dx:1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0}},
+        inky:{sprite:{x:11.5,y:14,drawType:"rgb(7 180 219)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:15,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0}},
+        clyde:{sprite:{x:15.5,y:14,drawType:"rgb(228 148 0)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0}}
     }
 
     drawGame(walls);
@@ -1132,7 +1132,7 @@ function moveSnake() {
     let collidesWithPower;
     let loops;
 
-    powered ? powered-- : powered = 0;
+    powered && powered--;
 
     newHead = {x:snake[0].x+dxStored,y:snake[0].y+dyStored,drawType:"head"}
     if (!collidesWithArray(newHead,walls)&&isCentered(newHead)) {
@@ -1144,13 +1144,12 @@ function moveSnake() {
     testHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
 
     collidesWithWall = collidesWithArray(testHead,walls);
-    collidesWithSelf = collidesWithArray(newHead,snake.slice(4)) && !powered;
+    collidesWithSelf = collidesWithArray(newHead,snake.slice(1)) && !powered;
     collidesWithFood = collides(newHead,food);
     collidesWithPower = collidesWithArray(newHead,powers);
-    loops = newHead.x < 0 || newHead.x > 27;
+    loops = newHead.x < 0.5 || newHead.x > 27.5;
 
     if (collidesWithWall) {
-        console.log("crash");
         return;
     } else if (collidesWithSelf) {
         dx = 0;
@@ -1158,13 +1157,15 @@ function moveSnake() {
         dxStored = 0;
         dyStored = 0;
         console.log("dead");
-        return;
+        gameRunning = false;
     } else if (collidesWithPower) {
         powered = powerTime;
         powers = powers.filter((el) => el!==collidesWithPower);
         for (let ghost of Object.values(ghosts)) {
-            ghost.movement.dx*=-1;
-            ghost.movement.dy*=-1;
+            if (ghost.home.leaving===0) {    
+                ghost.movement.dx*=-1;
+                ghost.movement.dy*=-1;
+            }
         }
     } else if (loops) {
         newHead.x -= 28*Math.sign(newHead.x)
@@ -1229,7 +1230,7 @@ function moveGhost(ghost,name) {
     }
 
     nextStep = {x:ghost.sprite.x+ghost.movement.dx/ghost.movement.speed,y:ghost.sprite.y+ghost.movement.dy/ghost.movement.speed,drawType:ghost.sprite.drawType};
-    console.log(name + ": " + nextStep.x + "," + nextStep.y)
+    //console.log(name + ": " + nextStep.x + "," + nextStep.y)
 
     if (isCentered(nextStep)) {
         smallestDistance = 10000;
@@ -1335,6 +1336,7 @@ function drawSnakeBody(body) {
     adjustment = curveDirections[body.drawType];
     ctx.beginPath();
     ctx.arc(gridX, gridY, adjustment.size, 0, 2 * Math.PI);
+    ctx.fillStyle = powered ? "rgb(254 243 7 / 20%)" : "rgb(254 243 7 / 100%)";
     ctx.fill();
 }
 
@@ -1349,6 +1351,7 @@ function drawWall(wall) {
     ctx.beginPath();
     ctx.moveTo(gridX+adjustment.startX, gridY+adjustment.startY);
     ctx.quadraticCurveTo(gridX, gridY, gridX+adjustment.endX, gridY+adjustment.endY);
+    ctx.strokeStyle = "#4B3EF1";
     ctx.stroke();
 }
 
@@ -1356,8 +1359,8 @@ function drawFood() {
     gridX = toGrid(food.x);
     gridY = toGrid(food.y);
     ctx.beginPath();
-    ctx.fillStyle = foodTypes[food.drawType];
     ctx.arc(gridX, gridY, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = foodTypes[food.drawType];
     ctx.fill();
 }
 
@@ -1366,6 +1369,7 @@ function drawPower(power) {
     gridY = toGrid(power.y);
     ctx.beginPath();
     ctx.arc(gridX, gridY, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = "#F7BD9A";
     ctx.fill();
 }
 
@@ -1373,20 +1377,30 @@ function drawGhost(ghost) {
     gridX = toGrid(ghost.sprite.x);
     gridY = toGrid(ghost.sprite.y);
     ctx.beginPath();
-    ctx.fillStyle = ghost.home.entering ? "grey" : powered ? "white" : ghost.sprite.drawType;
     ctx.arc(gridX, gridY, 15, 0, 2 * Math.PI);
+    if (ghost.home.entering) {
+        console.log("hometime");
+        ctx.fillStyle = "rgb(255 255 255 / 10%)";
+    } else if (powered > 40 || (powered%10 < 5 && powered > 0)) {
+        console.log("blue power");
+        ctx.fillStyle = "#2121DE";
+    } else if (powered%10 >= 5) {
+        console.log("white power");
+        ctx.fillStyle = "white";
+    } else {
+        console.log(ghost.sprite.drawType);
+        ctx.fillStyle = ghost.sprite.drawType;
+    }
     ctx.fill();
 }
 
 function drawSnake() {
-    ctx.fillStyle = powered ? "rgb(252 234 63 / 70%)" : "rgb(252 234 63 / 100%)"
     for (let body of snake) {
         drawSnakeBody(body);
     }
 }
 
 function drawWalls() {
-    ctx.strokeStyle = "#3E5BF5";
     ctx.lineWidth = 2.5;
     for (let wall of walls) {
         drawWall(wall);
@@ -1394,7 +1408,6 @@ function drawWalls() {
 }
 
 function drawPowers() {
-    ctx.fillStyle = "orange";
     for (let power of powers) {
         drawPower(power);
     }
