@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 let dx, dy, dxStored, dyStored, gridX, gridY, adjustment, snake, ghosts, food, powers, powered;
 let gameRunning = false;
 
+const growth = 3;
 const powerTime = 200;
 const chaseTime = 500;
 const scatterTime = 170;
@@ -1058,12 +1059,25 @@ let randomFrom = array => array[Math.floor(Math.random()*array.length)];
 
 /**
  * Converts Grid Unit to Canvas Unit
- * @param {number} coord 
- * @returns {number} Value of coord in canvas units
+ * @param {Number} coord 
+ * @returns {Number} Value of coord in canvas units
  */
 let toGrid = coord => coord*20+10;
 
+/**
+ * Checks if a sprite is centred on a grid point or in between grid points
+ * @param {Sprite} sprite 
+ * @returns True if spite is centered
+ */
 let isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
+
+/**
+ * Calculates absolute distance between two sprites using pythagoras
+ * @param {Sprite} spriteA 
+ * @param {Sprite} spriteB 
+ * @returns the distance between them
+ */
+let distanceTo = (spriteA,spriteB) => Math.sqrt(Math.abs(spriteA.x-spriteB.x)**2+Math.abs(spriteA.y-spriteB.y)**2);
 
 
 // COLLISION TEST FUNCTIONS
@@ -1075,24 +1089,37 @@ let isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
  * @returns {boolean} true if they have the same coordinates
  */
 let collides = (a,b) => a.x===b.x&&a.y===b.y;
+
+/**
+ * Checks for collision between two Sprites Rounded to closest grid point
+ * @param {Sprite} a 
+ * @param {Sprite} b 
+ * @returns {boolean} true if they have the same rounded coordinates
+ */
 let collidesRounded = (a,b) => Math.round(a.x)===Math.round(b.x)&&Math.round(a.y)===Math.round(b.y);
 
 /**
  * Checks for collision between a Sprite and an Array on Grid
- * @param {Sprite} head 
+ * @param {Sprite} sprite 
  * @param {Array} array 
  * @returns element if any coordinates in the array match the sprite or false if not
  */
-let collidesWithArray = function(head,array) {
+let collidesWithArray = function(sprite,array) {
     for (let el of array) {
-        if (collides(head,el)) { return el }
+        if (collides(sprite,el)) { return el }
     }
     return false;
 }
 
-let collidesRoundedWithArray = function(head,array) {
+/**
+ * Checks for collision between a Sprite and an Array Rounded to closest grid point
+ * @param {Sprite} sprite 
+ * @param {Array} array 
+ * @returns element if any rounded coordinates in the array match the sprite or false if not
+ */
+let collidesRoundedWithArray = function(sprite,array) {
     for (let el of array) {
-        if (collidesRounded(head,el)) { return el }
+        if (collidesRounded(sprite,el)) { return el }
     }
     return false;
 }
@@ -1121,10 +1148,10 @@ function initialiseGame() {
     powered = 0;
 
     ghosts = {
-        blinky:{sprite:{x:13.5,y:11,drawType:"rgb(255 5 0)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:0,entering:0,alreadyEaten:false}},
-        pinky:{sprite:{x:13.5,y:14,drawType:"rgb(226 146 189)"},movement:{dx:1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0,alreadyEaten:false}},
-        inky:{sprite:{x:11.5,y:14,drawType:"rgb(7 180 219)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0,alreadyEaten:false}},
-        clyde:{sprite:{x:15.5,y:14,drawType:"rgb(228 148 0)"},movement:{dx:-1,dy:0,speed:8,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:60,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0,alreadyEaten:false}}
+        blinky:{sprite:{x:13.5,y:11,drawType:"rgb(255 5 0)"},movement:{dx:-1,dy:0,lastdx:0,lastdy:0,mode:"scatter",timeLeft:scatterTime},target:{x:25,y:-2,scatterX:25,scatterY:-2},home:{unlockLength:0,inHouse:false,leaving:0,entering:0,alreadyEaten:false}},
+        pinky:{sprite:{x:13.5,y:14,drawType:"rgb(226 146 189)"},movement:{dx:1,dy:0,lastdx:0,lastdy:0,mode:"scatter",timeLeft:scatterTime},target:{x:2,y:-2,scatterX:2,scatterY:-2},home:{unlockLength:0,inHouse:true,leaving:ghostPrisonPaths.pinky.length,entering:0,alreadyEaten:false}},
+        inky:{sprite:{x:11.5,y:14,drawType:"rgb(7 180 219)"},movement:{dx:-1,dy:0,lastdx:0,lastdy:0,mode:"scatter",timeLeft:scatterTime},target:{x:27,y:32,scatterX:27,scatterY:32},home:{unlockLength:30,inHouse:true,leaving:ghostPrisonPaths.inky.length,entering:0,alreadyEaten:false}},
+        clyde:{sprite:{x:15.5,y:14,drawType:"rgb(228 148 0)"},movement:{dx:-1,dy:0,lastdx:0,lastdy:0,mode:"scatter",timeLeft:scatterTime},target:{x:0,y:32,scatterX:0,scatterY:32},home:{unlockLength:60,inHouse:true,leaving:ghostPrisonPaths.clyde.length,entering:0,alreadyEaten:false}}
     }
 
     drawGame(walls);
@@ -1140,54 +1167,72 @@ function moveSnake() {
     let collidesWithPower;
     let loops;
 
+    // POWERED CHECK
+
+    // If powered, reduce power timer
     powered && powered--;
 
+    // TURNING CHECK
+
+    // If key has been pressed, snake looks in that direction to see if it can move that way
+    // If so, change snakes direction
     newHead = {x:snake[0].x+dxStored,y:snake[0].y+dyStored,drawType:"head"}
     if (!collidesWithArray(newHead,walls)&&isCentered(newHead)) {
         dx = dxStored;
         dy = dyStored;
     }
 
+    // COLLISION CHECKS
+
+    // Looks ahead to next step and next grid space
     newHead = {x:snake[0].x+dx/4,y:snake[0].y+dy/4,drawType:"head"};
     testHead = {x:snake[0].x+dx,y:snake[0].y+dy,drawType:"head"}
 
+    // Checks if next grid space is a wall
     collidesWithWall = collidesWithArray(testHead,walls);
+    // Checks if next step collides with its own body and isn't powered
     collidesWithSelf = collidesWithArray(newHead,snake.slice(1)) && !powered;
+    // Checks if next step collides with food
     collidesWithFood = collides(newHead,food);
+    // Checks if next step collides with power
     collidesWithPower = collidesWithArray(newHead,powers);
+    // Checks if next step is off the edge
     loops = newHead.x < 0.5 || newHead.x > 27.5;
 
+    // If snake would collide with wall then don't move
     if (collidesWithWall) {
         return;
+    // If snake would collide with itself, game over
     } else if (collidesWithSelf) {
-        dx = 0;
-        dy = 0;
-        dxStored = 0;
-        dyStored = 0;
-        console.log("dead");
         gameRunning = false;
+    // If snake would get power then, set power counter to max, remove that power pellet, and affect ghosts
     } else if (collidesWithPower) {
         powered = powerTime;
         powers = powers.filter((el) => el!==collidesWithPower);
         for (let ghost of Object.values(ghosts)) {
+            // If the ghost is notand heading home, reverse its direction and reset its already eaten status
             if (ghost.home.leaving===0) {    
-                ghost.movement.dx*=-1;
-                ghost.movement.dy*=-1;
+                reverseGhost(ghost);
                 ghost.home.alreadyEaten = false;
             }
         }
+    // If snake would go off the edge, move it to the other edge
     } else if (loops) {
         newHead.x -= 28*Math.sign(newHead.x)
     }
 
+    // Set current head to body and add new head
     snake[0].drawType = "body";
     snake.unshift(newHead);
+
+    // If snake would eat food, create new food, grow snake three times
     if (collidesWithFood) {
         food = addFood();
         newTail = {x:snake[snake.length-1].x,y:snake[snake.length-1].y,drawType:"tail"}
-        snake.push(newTail)
-        snake.push(newTail)
-        snake.push(newTail)
+        for (let n = 0; n < growth; n++) {
+            snake.push(newTail)
+        }
+    // Otherwise, remove tail and turn last body part into tail
     } else {
         snake.pop();
         snake[snake.length-1].drawType = "tail";
@@ -1204,12 +1249,17 @@ function moveGhost(ghost,name) {
     let distanceToTarget;
     let collidesWithWall;
     let goingHomeSpace;
+    let theWayItCame;
     let cantGoUp;
     let collidesWithSnake;
     let loops;
 
-    reverseDirection = [ghost.movement.dx*-1,ghost.movement.dy*-1];
+    ghost.movement.lastdx = ghost.movement.dx;
+    ghost.movement.lastdy = ghost.movement.dy;
 
+    // TARGET SETTING
+
+    // Sets target of ghost based on it's movement mode and if it's not going home after being eaten
     if (ghost.movement.mode==="chase"&&!ghost.home.leaving) {
         switch (name) {
             case "blinky":
@@ -1225,7 +1275,7 @@ function moveGhost(ghost,name) {
                 ghost.target.y = snake[0].y + dy*2 + snake[0].y + dx*2 - ghosts["blinky"].sprite.y;
                 break;
             case "clyde":
-                if (Math.sqrt(Math.abs(snake[0].x-ghost.sprite.x)**2+Math.abs(snake[0].y-ghost.sprite.y)**2)<8) {
+                if (distanceTo(snake[0],ghost.sprite)<8) {
                     ghost.target.x = ghost.target.scatterX;
                     ghost.target.y = ghost.target.scatterY;
                 } else {
@@ -1239,9 +1289,15 @@ function moveGhost(ghost,name) {
         ghost.target.y = ghost.target.scatterY;
     }
 
-    nextStep = {x:ghost.sprite.x+ghost.movement.dx/ghost.movement.speed,y:ghost.sprite.y+ghost.movement.dy/ghost.movement.speed,drawType:ghost.sprite.drawType};
+    // MOVEMENT DECISION ALGORITHM
 
+    // Ghost looks ahead to where it's next step will be
+    nextStep = {x:ghost.sprite.x+ghost.movement.dx/8,y:ghost.sprite.y+ghost.movement.dy/8,drawType:ghost.sprite.drawType};
+
+    // If it's next step is centred on the grid, make decision on where to go next
     if (isCentered(nextStep)) {
+
+        // Checks to see if next step is at a special going home space then forces the ghost to go towards home if it's been eaten
         goingHomeSpace = collidesWithArray(nextStep,ghostGoingHomeSpecialSpaces)
         if (ghost.home.entering>0 && goingHomeSpace) {
             if (goingHomeSpace.dy) {
@@ -1251,14 +1307,25 @@ function moveGhost(ghost,name) {
                 ghost.movement.dx = goingHomeSpace.dx;
                 ghost.movement.dy = goingHomeSpace.dy;
             }
+        // If not, look at each direction from the next step and evaluate possible directions to move
         } else {
             smallestDistance = 10000;
+            reverseDirection = [ghost.movement.dx*-1,ghost.movement.dy*-1]
             for (let direction of Object.values(directions)) {
+
+                // Ghost looks at next possible step from its next step
                 possibleStep = {x:nextStep.x+direction.x,y:nextStep.y+direction.y,drawType:nextStep.drawType}
+                // Checks if possible step is a wall
                 collidesWithWall = collidesWithArray(possibleStep,walls);
+                // Checks if possible step is the way it just came from
+                theWayItCame = reverseDirection[0]===direction.x&&reverseDirection[1]===direction.y;
+                // Checks if possible step is the special case where it can't go up
                 cantGoUp = direction.y===-1&&collidesWithArray(possibleStep,ghostUpSpecialSpaces);
-                if (!collidesWithWall&&!(reverseDirection[0]===direction.x&&reverseDirection[1]===direction.y)&&!cantGoUp) {
-                    distanceToTarget = Math.abs(possibleStep.x-ghost.target.x)+Math.abs(possibleStep.y-ghost.target.y)
+
+                // If the possible step is none of these, check to see if it the closest step to the ghosts target
+                // Set new direction movement to this steps direction
+                if (!collidesWithWall&&!theWayItCame&&!cantGoUp) {
+                    distanceToTarget = distanceTo(possibleStep,ghost.target)
                     if (distanceToTarget < smallestDistance) {
                         smallestDistance = distanceToTarget;
                         ghost.movement.dx = direction.x;
@@ -1268,45 +1335,68 @@ function moveGhost(ghost,name) {
             }
         }
     }
+
+    // SNAKE AND EDGE INTERACTION
     
+    // Checks to see if the ghost's next step collides with the snake
     collidesWithSnake = collidesRoundedWithArray(ghost.sprite,snake);
+    // Checks to see if the ghost's next step goies off the side
     loops = nextStep.x < -0.5 || nextStep.x > 27.5;
 
+    // If the ghost collides and is to going home after being eaten then evaluate the outcome
     if (collidesWithSnake&&ghost.home.leaving===0) {
+
+        // If the snake has powered up and the ghost has not already been eaten from that powerup, ghost gets eaten and starts heading home
         if (powered && !ghost.home.alreadyEaten) {
+            newTail = {x:snake[snake.length-1].x,y:snake[snake.length-1].y,drawType:"tail"}
+            for (let n = 0; n < growth*3; n++) {
+                snake.push(newTail)
+            }
             ghost.target.x = 13.5;
             ghost.target.y = 11;
             ghost.home.entering = ghostPrisonPaths[name].length;
             ghost.home.leaving = ghostPrisonPaths[name].length;
             ghost.home.alreadyEaten = true;
+        // Otherwise, the ghost can hurt the snake
+        // If the ghost collides with the snakes head, game over
         } else if (collidesWithSnake.drawType === "head") {
             gameRunning = false;
+        // If the ghost collides with the snakes body or tail, snake gets chopped off at that point on its body
         } else {
             snake = snake.slice(0,snake.indexOf(collidesWithSnake));
         }
     }
+
+    // If the ghost's next step is off the side, move it to the other side
     if (loops) {
         nextStep.x -= 28*Math.sign(nextStep.x)
     }
 
+    // Replace ghost with its next step
     ghost.sprite = nextStep;
 
 }
 
 function moveGhosts() {
+    // Move each ghost
     for (let [ghostName,ghost] of Object.entries(ghosts)) {
         
+        // TARGET TIMER
+
+        // If the snake is not powered up
         if (!powered) {
+            // Reduce counter onj current movement mode timer
             ghost.movement.timeLeft--;
+            // If the ghost finishes leaving the house, make it eatable again
             if (!ghost.home.leaving) {
                 ghost.home.alreadyEaten = false;
             }
         }
         
+        // If the ghost movement mode timer is at 0, swap modes, reset timer and reverse ghosts direction
         if (!ghost.movement.timeLeft) {
             if (!ghost.home.leaving){
-                ghost.movement.dx *= -1;
-                ghost.movement.dy *= -1;
+                reverseGhost(ghost);
             }
             if (ghost.movement.mode==="chase") {
                 ghost.movement.mode = "scatter";
@@ -1317,6 +1407,9 @@ function moveGhosts() {
             }
         }
 
+        // MOVEMENT
+
+        // If the ghost is either entering or leaving home then it follows the path set out for it in ghostPrisonPaths
         if (ghost.home.inHouse) {
             if (ghost.home.entering){
                 ghost.sprite.x = ghostPrisonPaths[ghostName].toReversed()[ghost.home.entering-1].x;
@@ -1326,10 +1419,13 @@ function moveGhosts() {
                 ghost.sprite.x = ghostPrisonPaths[ghostName][ghost.home.leaving-1].x;
                 ghost.sprite.y = ghostPrisonPaths[ghostName][ghost.home.leaving-1].y;
                 ghost.home.leaving--;
+                // Once the ghost has finished leaving, set it to out of house
                 if (!ghost.home.leaving) { ghost.home.inHouse = false; }
             }
+        // If the ghost is heading home after being eaten reaches the entry way to the home, set it to start entering
         } else if (ghost.home.entering&&ghost.sprite.x===13.5&&ghost.sprite.y===11) {
             ghost.home.inHouse = true;
+        // Otherwise, move the ghost normally
         } else {
             moveGhost(ghost,ghostName)
         }
@@ -1337,10 +1433,17 @@ function moveGhosts() {
     }
 }
 
+let reverseGhost = function(ghost) {
+    ghost.movement.dx = ghost.movement.lastdx*=-1;
+    ghost.movement.dy = ghost.movement.lastdy*=-1;
+}
+
 let addFood = function() {
+    // Chooses a random location and type for the new food, then places food there
     let foodLocation = randomFrom(space);
     let foodType = randomFrom(Object.keys(foodTypes));
     let food = {x:foodLocation.x,y:foodLocation.y,drawType:foodType}
+    // If new food collides with any part of the snake, create new food
     for (let body of snake) {
         if (collides(food,body)) {
             food = addFood();
@@ -1353,7 +1456,7 @@ let addFood = function() {
 // DRAW FUNCTIONS
 
 /**
- * 
+ * Draw snakes body part
  * @param {Sprite} body 
  */
 function drawSnakeBody(body) {
@@ -1362,7 +1465,7 @@ function drawSnakeBody(body) {
     adjustment = curveDirections[body.drawType];
     ctx.beginPath();
     ctx.arc(gridX, gridY, adjustment.size, 0, 2 * Math.PI);
-    ctx.fillStyle = powered ? "rgb(254 243 7 / 20%)" : "rgb(254 243 7 / 100%)";
+    ctx.fillStyle = powered ? "rgb(254 243 7 / 50%)" : "rgb(254 243 7 / 100%)";
     ctx.fill();
 }
 
@@ -1414,10 +1517,6 @@ function drawGhost(ghost) {
         ctx.fillStyle = "white";
     }
     ctx.fill();
-
-    ctx.lineWidth = 4*ghost.movement.timeLeft/(ghost.movement.mode==="scatter" ? scatterTime : chaseTime);
-    ctx.strokeStyle = ghost.movement.mode==="scatter" ? "blue" : "red";
-    ctx.stroke();
 
 }
 
