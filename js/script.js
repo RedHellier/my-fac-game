@@ -10,6 +10,10 @@ const chaseTime = 500;
 const scatterTime = 170;
 const gameSpeed = 40;
 
+let score;
+let ghostsEaten;
+let foodEaten;
+
 /**
  * @typedef Sprite
  * @type {object}
@@ -1128,12 +1132,17 @@ let collidesRoundedWithArray = function(sprite,array) {
 // GAME DATA ALTERING FUNCTIONS
 
 function initialiseGame() {
+    score = 0;
+    ghostsEaten = 0;
+    foodEaten = 0;
     dx = dxStored;
     dy = dyStored;
 
     snake = [
         {x:13.5,y:23,drawType:"head"},
-        {x:13.5-dxStored/4,y:23,drawType:"tail"}
+        {x:13.5-dxStored/4,y:23,drawType:"body"},
+        {x:13.5-dxStored/2,y:23,drawType:"body"},
+        {x:13.5-3*dxStored/4,y:23,drawType:"tail"}
     ];
 
     food = addFood();
@@ -1227,6 +1236,7 @@ function moveSnake() {
 
     // If snake would eat food, create new food, grow snake three times
     if (collidesWithFood) {
+        foodEaten++;
         food = addFood();
         newTail = {x:snake[snake.length-1].x,y:snake[snake.length-1].y,drawType:"tail"}
         for (let n = 0; n < growth; n++) {
@@ -1348,8 +1358,9 @@ function moveGhost(ghost,name) {
 
         // If the snake has powered up and the ghost has not already been eaten from that powerup, ghost gets eaten and starts heading home
         if (powered && !ghost.home.alreadyEaten) {
+            ghostsEaten++;
             newTail = {x:snake[snake.length-1].x,y:snake[snake.length-1].y,drawType:"tail"}
-            for (let n = 0; n < growth*3; n++) {
+            for (let n = 0; n < growth+5; n++) {
                 snake.push(newTail)
             }
             ghost.target.x = 13.5;
@@ -1564,14 +1575,29 @@ function drawGameStart() {
     drawGhosts();
 }
 
+
+// HTML INTERACTION FUNCTIONS
+
+function updateCurrentScore() {
+    let snakeLength = Math.ceil(snake.length/4)||0
+    document.getElementById("current-length").innerHTML = "Length: " + snakeLength;
+    document.getElementById("ghosts-eaten").innerHTML = "Ghosts Eaten: " + ghostsEaten;
+    document.getElementById("food-eaten").innerHTML = "Food Eaten: " + foodEaten;
+    document.getElementById("score").innerHTML = "SCORE: " + (foodEaten + 4*ghostsEaten)*snakeLength;
+}
+
+// GAME RUNNING FUNCTIONS
+
 function updateGame() {
     if (gameRunning) {
         moveSnake();
         moveGhosts();
         drawGame();
+        updateCurrentScore();
         setTimeout(updateGame,gameSpeed)
     } else {
         drawGameStart();
+        updateCurrentScore();
         setTimeout(updateGame,gameSpeed)
     }
 }
@@ -1579,6 +1605,14 @@ function updateGame() {
 function startGame() {
     gameRunning = true;
     initialiseGame();
+}
+
+function endGame() {
+    gameRunning = false;
+    document.getElementById("game-over-text").style.display = "block";
+    document.getElementById("final-score-text").style.display = "block";
+    document.getElementById("final-score-text").innerHTML = "FINAL SCORE: " + (foodEaten + 4*ghostsEaten)*snakeLength;
+    document.getElementById("start-screen").style.display = "flex";
 }
 
 function pressStart() {

@@ -10,25 +10,39 @@
   </head>
   <body>
     <header>
-        <h1 id="game-title">SNAC-MAN</h1>
+      <h1 id="game-title">SNAC-MAN</h1>
     </header>
     <main>
-        <div id="game-border">
-            <canvas id="game-space" width="560" height="620"></canvas> 
-            <div id="start-screen">
-              <button id="start-button" onclick="pressStart()">START</button>
-            </div>
+      <div id="score-table" class="game-text">
+       <h1>HIGHSCORES</h1>
+      </div>
+      <div id="game-border">
+        <canvas id="game-space" width="560" height="620"></canvas> 
+        <div id="start-screen">
+          <h1 id="game-over-text">GAME OVER</h1>
+          <h1>PRESS START TO BEGIN</h1>
+          <button id="start-button" onclick="pressStart()">START</button>
+          <p id="final-score-text"></p>
         </div>
+      </div>
+      <div id ="current-score" class="game-text">
+        <h1>CURRENT GAME</h1>
+        <p id="current-length">Length: 0</p>
+        <p id="ghosts-eaten">Ghosts Eaten: 0</p>
+        <p id="food-eaten">Food Eaten: 0</p>
+        <p>---------------</p>
+        <p id="score">SCORE: 0</p>
+      </div>
     </main>
     <footer>
       <div id="game-keys">
         <div id="up-key">
-            <button class="game-key" id="up" onclick="handleKeyPress(38)">W</button>
+          <button class="game-key" id="up" onclick="handleKeyPress(38)">W</button>
         </div>
         <div id="other-keys">
-            <button class="game-key" id="left" onclick="handleKeyPress(37)">A</button>
-            <button class="game-key" id="down" onclick="handleKeyPress(40)">S</button>
-            <button class="game-key" id="right" onclick="handleKeyPress(39)">D</button>
+          <button class="game-key" id="left" onclick="handleKeyPress(37)">A</button>
+          <button class="game-key" id="down" onclick="handleKeyPress(40)">S</button>
+          <button class="game-key" id="right" onclick="handleKeyPress(39)">D</button>
         </div>
     </div>
     </footer>

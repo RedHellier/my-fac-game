@@ -8,11 +8,31 @@ body {
     margin: 0;
 }
 
+main {
+    display: flex;
+}
+
 #game-title {
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 50px;
     padding: 0;
     margin: 0;
+}
+
+.game-text {
+    width: 300px;
+    margin: 20px;
+}
+
+@media all and (max-width: 480px) {
+    .game-text {
+        display: none;
+    }
+}
+
+
+#score-table {
+    text-align: right;
 }
 
 #game-border {
@@ -38,6 +58,7 @@ body {
 #start-screen {
     position: absolute;
     background-color: black;
+    color: aliceblue;
     border-radius: 20px;
     width: 100%;
     height: 100%;
@@ -48,6 +69,10 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#game-over-text, #final-score-text {
+    display: none;
 }
 
 #game-keys {
