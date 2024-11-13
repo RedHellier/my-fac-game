@@ -12,24 +12,6 @@ main {
     display: flex;
 }
 
-#game-title {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 50px;
-    padding: 0;
-    margin: 0;
-}
-
-.game-text {
-    width: 300px;
-    margin: 20px;
-}
-
-@media all and (max-width: 480px) {
-    .game-text {
-        display: none;
-    }
-}
-
 
 #score-table {
     text-align: right;
@@ -104,4 +86,46 @@ main {
     width: 50px;
     padding: 0;
     margin: 8px;
+}
+
+@media all and (max-width: 480px) {
+    .game-text {
+        display: none;
+    }
+
+    #game-title-tall-screen {
+        display:block;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-size: 50px;
+        padding: 0;
+        margin: 0;
+    }
+
+    #game-title-short-screen {
+        display: none;
+    }
+}
+
+@media all and (min-width: 480px) {
+    .game-text {
+        display: block;
+        width: 300px;
+        margin: 20px;
+    }
+
+    #game-keys {
+        display: none;
+    }
+
+    #game-title-short-screen {
+        display:block;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-size: 50px;
+        padding: 0;
+        margin: 0;
+    }
+
+    #game-title-tall-screen {
+        display: none;
+    }
 }

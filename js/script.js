@@ -1059,21 +1059,21 @@ function handleKeyPress(event) {
  * @param {Array} array 
  * @returns Random item from array
  */
-let randomFrom = array => array[Math.floor(Math.random()*array.length)];
+const randomFrom = array => array[Math.floor(Math.random()*array.length)];
 
 /**
  * Converts Grid Unit to Canvas Unit
  * @param {Number} coord 
  * @returns {Number} Value of coord in canvas units
  */
-let toGrid = coord => coord*20+10;
+const toGrid = coord => coord*20+10;
 
 /**
  * Checks if a sprite is centred on a grid point or in between grid points
  * @param {Sprite} sprite 
  * @returns True if spite is centered
  */
-let isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
+const isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
 
 /**
  * Calculates absolute distance between two sprites using pythagoras
@@ -1081,7 +1081,7 @@ let isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
  * @param {Sprite} spriteB 
  * @returns the distance between them
  */
-let distanceTo = (spriteA,spriteB) => Math.sqrt(Math.abs(spriteA.x-spriteB.x)**2+Math.abs(spriteA.y-spriteB.y)**2);
+const distanceTo = (spriteA,spriteB) => Math.sqrt(Math.abs(spriteA.x-spriteB.x)**2+Math.abs(spriteA.y-spriteB.y)**2);
 
 
 // COLLISION TEST FUNCTIONS
@@ -1092,7 +1092,7 @@ let distanceTo = (spriteA,spriteB) => Math.sqrt(Math.abs(spriteA.x-spriteB.x)**2
  * @param {Sprite} b 
  * @returns {boolean} true if they have the same coordinates
  */
-let collides = (a,b) => a.x===b.x&&a.y===b.y;
+const collides = (a,b) => a.x===b.x&&a.y===b.y;
 
 /**
  * Checks for collision between two Sprites Rounded to closest grid point
@@ -1100,7 +1100,7 @@ let collides = (a,b) => a.x===b.x&&a.y===b.y;
  * @param {Sprite} b 
  * @returns {boolean} true if they have the same rounded coordinates
  */
-let collidesRounded = (a,b) => Math.round(a.x)===Math.round(b.x)&&Math.round(a.y)===Math.round(b.y);
+const collidesRounded = (a,b) => Math.round(a.x) === Math.round(b.x) && Math.round(a.y) === Math.round(b.y);
 
 /**
  * Checks for collision between a Sprite and an Array on Grid
@@ -1108,7 +1108,7 @@ let collidesRounded = (a,b) => Math.round(a.x)===Math.round(b.x)&&Math.round(a.y
  * @param {Array} array 
  * @returns element if any coordinates in the array match the sprite or false if not
  */
-let collidesWithArray = function(sprite,array) {
+const collidesWithArray = function(sprite,array) {
     for (let el of array) {
         if (collides(sprite,el)) { return el }
     }
@@ -1121,7 +1121,7 @@ let collidesWithArray = function(sprite,array) {
  * @param {Array} array 
  * @returns element if any rounded coordinates in the array match the sprite or false if not
  */
-let collidesRoundedWithArray = function(sprite,array) {
+const collidesRoundedWithArray = function(sprite,array) {
     for (let el of array) {
         if (collidesRounded(sprite,el)) { return el }
     }
@@ -1355,6 +1355,8 @@ function moveGhost(ghost,name) {
 
     // If the ghost collides and is to going home after being eaten then evaluate the outcome
     if (collidesWithSnake&&ghost.home.leaving===0) {
+
+        console.log(collidesWithSnake);
 
         // If the snake has powered up and the ghost has not already been eaten from that powerup, ghost gets eaten and starts heading home
         if (powered && !ghost.home.alreadyEaten) {
