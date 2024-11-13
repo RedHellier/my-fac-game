@@ -2,7 +2,7 @@ const canvas = document.getElementById("game-space");
 const ctx = canvas.getContext("2d");
 
 let dx, dy, dxStored, dyStored, gridX, gridY, adjustment, snake, ghosts, food, powers, powered;
-let gameRunning = false;
+let gameState = "stopped";
 
 const growth = 3;
 const powerTime = 200;
@@ -1038,7 +1038,7 @@ function handleKeyPress(event) {
     if (keyPressed === RIGHT_KEY && !goingLeft) {
         dxStored = directions.right.x;
         dyStored = directions.right.y;
-        if (!gameRunning) { startGame(); }
+        if (gameState === "initialised") { startGame(); }
     }
     if (keyPressed === DOWN_KEY && !goingUp) {
         dxStored = directions.down.x;
@@ -1047,7 +1047,7 @@ function handleKeyPress(event) {
     if (keyPressed === LEFT_KEY && !goingRight) {
         dxStored = directions.left.x;
         dyStored = directions.left.y;
-        if (!gameRunning) { startGame(); }
+        if (gameState === "initialised") { startGame(); }
     }
 }
 
@@ -1083,6 +1083,8 @@ const isCentered = sprite => sprite.x%1===0&&sprite.y%1===0;
  */
 const distanceTo = (spriteA,spriteB) => Math.sqrt(Math.abs(spriteA.x-spriteB.x)**2+Math.abs(spriteA.y-spriteB.y)**2);
 
+
+const snakeLength = () => Math.ceil(snake.length/4) || 0;
 
 // COLLISION TEST FUNCTIONS
 
@@ -1175,6 +1177,7 @@ function moveSnake() {
     let collidesWithFood;
     let collidesWithPower;
     let loops;
+    console.log(snake[0]);
 
     // POWERED CHECK
 
@@ -1206,14 +1209,14 @@ function moveSnake() {
     // Checks if next step collides with power
     collidesWithPower = collidesWithArray(newHead,powers);
     // Checks if next step is off the edge
-    loops = newHead.x < 0.5 || newHead.x > 27.5;
+    loops = newHead.x < -0.5 || newHead.x > 27.5;
 
     // If snake would collide with wall then don't move
     if (collidesWithWall) {
         return;
     // If snake would collide with itself, game over
     } else if (collidesWithSelf) {
-        gameRunning = false;
+        endGame();
     // If snake would get power then, set power counter to max, remove that power pellet, and affect ghosts
     } else if (collidesWithPower) {
         powered = powerTime;
@@ -1245,7 +1248,7 @@ function moveSnake() {
     // Otherwise, remove tail and turn last body part into tail
     } else {
         snake.pop();
-        snake[snake.length-1].drawType = "tail";
+        snake[snake.length-1].drawType = snake.length > 1 ? "tail" : "head";
     }
 
     
@@ -1373,7 +1376,7 @@ function moveGhost(ghost,name) {
         // Otherwise, the ghost can hurt the snake
         // If the ghost collides with the snakes head, game over
         } else if (collidesWithSnake.drawType === "head") {
-            gameRunning = false;
+            endGame();
         // If the ghost collides with the snakes body or tail, snake gets chopped off at that point on its body
         } else {
             snake = snake.slice(0,snake.indexOf(collidesWithSnake));
@@ -1581,43 +1584,45 @@ function drawGameStart() {
 // HTML INTERACTION FUNCTIONS
 
 function updateCurrentScore() {
-    let snakeLength = Math.ceil(snake.length/4)||0
-    document.getElementById("current-length").innerHTML = "Length: " + snakeLength;
+    document.getElementById("current-length").innerHTML = "Length: " + snakeLength();
     document.getElementById("ghosts-eaten").innerHTML = "Ghosts Eaten: " + ghostsEaten;
     document.getElementById("food-eaten").innerHTML = "Food Eaten: " + foodEaten;
-    document.getElementById("score").innerHTML = "SCORE: " + (foodEaten + 4*ghostsEaten)*snakeLength;
+    document.getElementById("score").innerHTML = "SCORE: " + (foodEaten + 4*ghostsEaten)*snakeLength();
 }
 
 // GAME RUNNING FUNCTIONS
 
 function updateGame() {
-    if (gameRunning) {
+    if (gameState === "running") {
         moveSnake();
         moveGhosts();
         drawGame();
         updateCurrentScore();
+        console.log(gameSpeed);
         setTimeout(updateGame,gameSpeed)
-    } else {
+    } else if (gameState === "initialised") {
         drawGameStart();
         updateCurrentScore();
+        console.log(gameSpeed);
         setTimeout(updateGame,gameSpeed)
     }
 }
 
 function startGame() {
-    gameRunning = true;
+    gameState = "running";
     initialiseGame();
 }
 
 function endGame() {
-    gameRunning = false;
+    gameState = "stopped";
     document.getElementById("game-over-text").style.display = "block";
     document.getElementById("final-score-text").style.display = "block";
-    document.getElementById("final-score-text").innerHTML = "FINAL SCORE: " + (foodEaten + 4*ghostsEaten)*snakeLength;
+    document.getElementById("final-score-text").innerHTML = "FINAL SCORE: " + (foodEaten + 4*ghostsEaten)*snakeLength();
     document.getElementById("start-screen").style.display = "flex";
 }
 
 function pressStart() {
+    gameState = "initialised";
     document.getElementById("start-screen").style.display = "none";
     dxStored=0;
     dyStored=0;
