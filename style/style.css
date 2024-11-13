@@ -2,7 +2,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: aliceblue;
+    background-color: #0e0e0e;
+    color: aliceblue;
+    font-family: basic-font;
+    font-size: 12px;
     align-items: center;
     height: 98vh;
     margin: 0;
@@ -19,7 +22,7 @@ main {
 
 #game-border {
     background-color: black;
-    border: solid yellow 4px;
+    border: solid #D50000 10px;
     border-radius: 20px;
     width: 98vw;
     max-width: 566px;
@@ -46,11 +49,23 @@ main {
     height: 100%;
     bottom: 0;
     z-index: 2;
-    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#start-button {
+    font-family: basic-font;
+    font-size: 18px;
+    border: none;
+    background-color: black;
+    color:aliceblue;
+    cursor: pointer;
+}
+
+#start-button:hover {
+    color:#D50000;
 }
 
 #game-over-text, #final-score-text {
@@ -93,15 +108,14 @@ main {
         display: none;
     }
 
-    #game-title-tall-screen {
+    #logo-tall-screen {
         display:block;
-        font-family: Georgia, 'Times New Roman', Times, serif;
-        font-size: 50px;
+        width:98vw;
         padding: 0;
         margin: 0;
     }
 
-    #game-title-short-screen {
+    #logo-short-screen {
         display: none;
     }
 }
@@ -117,15 +131,19 @@ main {
         display: none;
     }
 
-    #game-title-short-screen {
+    #logo-short-screen {
         display:block;
-        font-family: Georgia, 'Times New Roman', Times, serif;
-        font-size: 50px;
+        width:100%;
         padding: 0;
         margin: 0;
     }
 
-    #game-title-tall-screen {
+    #logo-tall-screen {
         display: none;
     }
+}
+
+@font-face {
+    font-family: "basic-font";
+    src: url("../media/fonts/emulogic-font/Emulogic-zrEw.ttf") format("truetype");
 }

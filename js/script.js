@@ -1543,7 +1543,7 @@ function drawSnake() {
 }
 
 function drawWalls() {
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 3;
     for (let wall of walls) {
         drawWall(wall);
     }
