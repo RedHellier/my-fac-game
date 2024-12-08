@@ -40,7 +40,7 @@ main {
     max-height:  626px;
 }
 
-#start-screen {
+#start-screen, #how-to-play {
     position: absolute;
     background-color: black;
     color: aliceblue;
@@ -49,10 +49,17 @@ main {
     height: 100%;
     bottom: 0;
     z-index: 2;
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#start-screen {
+    display: flex;
+}
+
+#how-to-play {
+    display: none;
 }
 
 #start-button {
@@ -103,19 +110,33 @@ main {
     margin: 8px;
 }
 
+.htp-img {
+    height: 10px;
+}
+
+#play-desktop, #play-mobile {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+}
+
 @media all and (max-width: 480px) {
     .game-text {
         display: none;
     }
 
-    #logo-tall-screen {
-        display:block;
+    #start-screen, #how-to-play {
+        font-size: 8px;
+    }
+
+    #logo-tall-screen, #play-mobile {
+        display:flex;
         width:98vw;
         padding: 0;
         margin: 0;
     }
 
-    #logo-short-screen {
+    #logo-short-screen, #play-desktop {
         display: none;
     }
 }
@@ -131,14 +152,14 @@ main {
         display: none;
     }
 
-    #logo-short-screen {
-        display:block;
+    #logo-short-screen, #play-desktop {
+        display: flex;
         width:100%;
         padding: 0;
         margin: 0;
     }
 
-    #logo-tall-screen {
+    #logo-tall-screen, #play-mobile {
         display: none;
     }
 }

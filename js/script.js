@@ -1023,6 +1023,7 @@ function handleKeyPress(event) {
     const UP_KEY = 38;
     const DOWN_KEY = 40;
     const SPACE_KEY = 32;
+    const ENTER_KEY = 13;
 
     const goingUp = dy === -1;
     const goingDown = dy === 1;
@@ -1048,6 +1049,10 @@ function handleKeyPress(event) {
         dxStored = directions.left.x;
         dyStored = directions.left.y;
         if (gameState === "initialised") { startGame(); }
+    }
+
+    if (keyPressed === ENTER_KEY && gameState === "stopped") {
+        pressStart();
     }
 }
 
@@ -1177,7 +1182,6 @@ function moveSnake() {
     let collidesWithFood;
     let collidesWithPower;
     let loops;
-    console.log(snake[0]);
 
     // POWERED CHECK
 
@@ -1359,7 +1363,6 @@ function moveGhost(ghost,name) {
     // If the ghost collides and is to going home after being eaten then evaluate the outcome
     if (collidesWithSnake&&ghost.home.leaving===0) {
 
-        console.log(collidesWithSnake);
 
         // If the snake has powered up and the ghost has not already been eaten from that powerup, ghost gets eaten and starts heading home
         if (powered && !ghost.home.alreadyEaten) {
@@ -1598,12 +1601,10 @@ function updateGame() {
         moveGhosts();
         drawGame();
         updateCurrentScore();
-        console.log(gameSpeed);
         setTimeout(updateGame,gameSpeed)
     } else if (gameState === "initialised") {
         drawGameStart();
         updateCurrentScore();
-        console.log(gameSpeed);
         setTimeout(updateGame,gameSpeed)
     }
 }
@@ -1628,5 +1629,17 @@ function pressStart() {
     dyStored=0;
     initialiseGame();
     updateGame();
+}
+
+function howToPlayScreen() {
+    gameState = "howToPlay";
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("how-to-play").style.display = "flex";
+}
+
+function startScreen() {
+    gameState = "stopped";
+    document.getElementById("start-screen").style.display = "flex";
+    document.getElementById("how-to-play").style.display = "none";
 }
 

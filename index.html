@@ -15,15 +15,36 @@
     <main>
       <div id="score-table" class="game-text">
         <img id="logo-short-screen" src="media/images/snacman-logo.png">
-        <h1>HIGHSCORES</h1>
       </div>
       <div id="game-border">
         <canvas id="game-space" width="560" height="620"></canvas> 
         <div id="start-screen">
           <h1 id="game-over-text">GAME OVER</h1>
-          <h1>PRESS TO BEGIN</h1>
-          <button id="start-button" onclick="pressStart()">START</button>
+          <h1 id="play-desktop">PRESS ENTER TO PLAY</h1>
+          <h1 id="play-mobile"><button id="start-button" onclick="pressStart()">PLAY</button></h1>
+          <br>
+          <br>
+          <br>
+          <br>
+          <button id="start-button" onclick="howToPlayScreen()">HOW TO PLAY</button>
           <p id="final-score-text"></p>
+        </div>
+        <div id="how-to-play">
+          <p>Move SNAC-MAN <img class="htp-img" src="media/icons/snake.png"> with WASD / Arrow Keys </p>
+          <p></p>
+          <p>Eat Food <img class="htp-img" src="media/icons/foods.png"> to Grow Longer</p>
+          <p></p>
+          <p>If a Ghost <img class="htp-img" src="media/icons/ghosts.png"> Hits your Head - GAME OVER</p>
+          <p>If you hit your own Tail - GAME OVER</p>
+          <p></p>
+          <p>If a ghost hits your tail </p>
+          <p>- You get chopped in half</p>
+          <p></p>
+          <p>Eat Power Ups <img class="htp-img" src="media/icons/power.png"> to:</p>
+          <p>- Eat Ghosts <img class="htp-img" src="media/icons/ghosts.png"></p>
+          <p>- Move Through Your Tail</p>
+          <p></p>
+          <button id="start-button" onclick="startScreen()">BACK</button>
         </div>
       </div>
       <div id ="current-score" class="game-text">
